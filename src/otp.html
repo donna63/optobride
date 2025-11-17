@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verify OTP — Lekkilet / Optob</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    /* small floating entrance */
+    @keyframes floatIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-floatIn { animation: floatIn 420ms ease-out both; }
+    /* form field invalid style fallback for older browsers */
+    .invalid { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08); border-color: #ef4444; }
+    /* OTP input styling */
+    .otp-input {
+      width: 3rem;
+      height: 3rem;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      background-color: #f9fafb;
+    }
+    .otp-input:focus {
+      outline: none;
+      border-color: #201933;
+      box-shadow: 0 0 0 3px rgba(32, 25, 51, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fbf3e9]">
+
+  <!-- Top Nav -->
+  <header class="bg-[#201933] text-white">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="#" class="inline-flex items-center gap-2 text-sm md:text-base hover:underline">
+          <!-- back arrow -->
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"></path>
+          </svg>
+          <span>Back To Homepage</span>
+        </a>
+      </div>
+
+      <div class="text-sm md:text-base">
+        <span class="text-gray-300">Already have an account?</span>
+        <a href="#" class="text-amber-400 hover:underline ml-2">Log In</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero area with centered card -->
+  <main class="py-12 md:m-20">
+    <div class="max-w-7xl mx-auto px-4">
+
+      <!-- centered card (wide) -->
+      <div class="relative">
+        <!-- the card container -->
+        <div class="bg-white rounded-2xl shadow-[0_20px_60px_rgba(32,25,51,0.08)] p-6 md:p-10 animate-floatIn">
+          <!-- Title tab floating centered top -->
+          <div class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div class="bg-white px-6 py-3 rounded-xl shadow-sm border border-transparent text-[#201933] flex items-center gap-3">
+              <!-- icon -->
+              <svg class="w-6 h-6 text-[#201933]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11a4 4 0 10-8 0 4 4 0 008 0zM12 14v7"></path>
+              </svg>
+              <h2 class="text-lg md:text-2xl font-semibold">Verify Your Account</h2>
+            </div>
+          </div>
+
+          <!-- spacing so title tab doesn't overlap content -->
+          <div class="h-8 md:h-10"></div>
+
+          <!-- OTP Form -->
+          <form id="otpForm" class="max-w-md mx-auto" novalidate>
+            <!-- Instruction -->
+            <div class="text-center mb-8">
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">Enter 6-digit OTP we just sent</h3>
+              <p class="text-gray-600">SMS sent to <span class="font-medium">+234 810 *** 3810</span></p>
+            </div>
+
+            <!-- OTP Inputs -->
+            <div class="flex justify-center gap-3 mb-8">
+              <input type="text" maxlength="1" class="otp-input" data-index="0" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+              <input type="text" maxlength="1" class="otp-input" data-index="1" inputmode="numeric" pattern="[0-9]*" />
+              <input type="text" maxlength="1" class="otp-input" data-index="2" inputmode="numeric" pattern="[0-9]*" />
+              <input type="text" maxlength="1" class="otp-input" data-index="3" inputmode="numeric" pattern="[0-9]*" />
+              <input type="text" maxlength="1" class="otp-input" data-index="4" inputmode="numeric" pattern="[0-9]*" />
+              <input type="text" maxlength="1" class="otp-input" data-index="5" inputmode="numeric" pattern="[0-9]*" />
+            </div>
+
+            <!-- Resend Code -->
+            <div class="text-center mb-8">
+              <p class="text-gray-600">
+                Didn't get code? 
+                <button type="button" id="resendBtn" class="text-[#201933] font-semibold hover:underline focus:outline-none">Resend Code</button>
+              </p>
+            </div>
+
+            <!-- Submit Button -->
+            <button id="submitBtn" type="submit" class="w-full bg-[#201933] text-white py-3 rounded-lg font-semibold hover:opacity-95 transition">Verify & Continue</button>
+          </form>
+
+          <!-- Countdown Timer -->
+          <div id="countdown" class="text-center mt-4 text-gray-500 text-sm">
+            Resend available in <span id="timer">60</span> seconds
+          </div>
+
+          <!-- small footer text -->
+          <div class="mt-10 text-xs text-gray-400 text-center">
+            © 2025 Optob Ride. All Rights Reserved. &nbsp; • &nbsp; <a href="#" class="text-gray-500 hover:underline">Privacy Policy</a> &nbsp; / &nbsp; <a href="#" class="text-gray-500 hover:underline">Terms</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- JS: OTP functionality -->
+  <script>
+    (function () {
+      const otpInputs = document.querySelectorAll('.otp-input');
+      const form = document.getElementById('otpForm');
+      const resendBtn = document.getElementById('resendBtn');
+      const countdownEl = document.getElementById('countdown');
+      const timerEl = document.getElementById('timer');
+      
+      let countdown = 60;
+      let timerInterval;
+
+      // Initialize OTP input behavior
+      otpInputs.forEach((input, index) => {
+        // Handle input
+        input.addEventListener('input', (e) => {
+          const value = e.target.value;
+          
+          // Only allow numbers
+          if (!/^\d*$/.test(value)) {
+            e.target.value = '';
+            return;
+          }
+          
+          // Auto-focus next input
+          if (value && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+          }
+          
+          // Check if all inputs are filled
+          checkOTPComplete();
+        });
+        
+        // Handle backspace
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !e.target.value && index > 0) {
+            otpInputs[index - 1].focus();
+          }
+        });
+        
+        // Handle paste
+        input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const pasteData = e.clipboardData.getData('text');
+          const numbers = pasteData.replace(/\D/g, '').split('');
+          
+          // Fill inputs with pasted numbers
+          numbers.forEach((num, i) => {
+            if (i < otpInputs.length) {
+              otpInputs[i].value = num;
+            }
+          });
+          
+          // Focus last filled input or last input
+          const lastIndex = Math.min(numbers.length, otpInputs.length) - 1;
+          otpInputs[lastIndex].focus();
+          
+          checkOTPComplete();
+        });
+      });
+      
+      // Check if all OTP inputs are filled
+      function checkOTPComplete() {
+        const allFilled = Array.from(otpInputs).every(input => input.value);
+        if (allFilled) {
+          form.dispatchEvent(new Event('otp-complete'));
+        }
+      }
+      
+      // Form submission
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Get OTP value
+        const otp = Array.from(otpInputs).map(input => input.value).join('');
+        
+        // Validate OTP (basic validation - should be 6 digits)
+        if (otp.length !== 6) {
+          alert('Please enter a complete 6-digit OTP code.');
+          return;
+        }
+        
+        // Show loading state
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Verifying...';
+        
+        // Simulate API call
+        setTimeout(() => {
+          // For demo purposes, accept any 6-digit code
+          btn.textContent = 'Verified Successfully!';
+          btn.classList.remove('bg-[#201933]');
+          btn.classList.add('bg-green-600');
+          
+          // Redirect after success (simulated)
+          setTimeout(() => {
+            alert('OTP verified successfully! Redirecting to dashboard...');
+            // In a real app, you would redirect here
+            window.location.href = '/src/dashboard.html';
+          }, 1000);
+        }, 1500);
+      });
+      
+      // Resend code functionality
+      function startCountdown() {
+        resendBtn.disabled = true;
+        countdown = 60;
+        timerEl.textContent = countdown;
+        countdownEl.classList.remove('hidden');
+        
+        timerInterval = setInterval(() => {
+          countdown--;
+          timerEl.textContent = countdown;
+          
+          if (countdown <= 0) {
+            clearInterval(timerInterval);
+            resendBtn.disabled = false;
+            countdownEl.classList.add('hidden');
+          }
+        }, 1000);
+      }
+      
+      resendBtn.addEventListener('click', () => {
+        // Simulate resending OTP
+        alert('A new OTP has been sent to your phone.');
+        startCountdown();
+      });
+      
+      // Auto-submit when OTP is complete (optional)
+      form.addEventListener('otp-complete', () => {
+        // Optionally auto-submit when all inputs are filled
+        // form.requestSubmit();
+      });
+      
+      // Start countdown on page load
+      startCountdown();
+      
+      // Focus first OTP input on page load
+      otpInputs[0].focus();
+    })();
+  </script>
+</body>
+</html>

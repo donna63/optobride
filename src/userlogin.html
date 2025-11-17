@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register — Lekkilet / Optob</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    /* small floating entrance */
+    @keyframes floatIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-floatIn { animation: floatIn 420ms ease-out both; }
+    /* form field invalid style fallback for older browsers */
+    .invalid { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08); border-color: #ef4444; }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fbf3e9]">
+
+  <!-- Top Nav -->
+  <header class="bg-[#201933] text-white">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="#" class="inline-flex items-center gap-2 text-sm md:text-base hover:underline">
+          <!-- back arrow -->
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"></path>
+          </svg>
+          <a href="index.html"><span>Back To Homepage</span></a>
+        </a>
+      </div>
+
+      <div class="text-sm md:text-base">
+        <span class="text-gray-300">Already have an account?</span>
+        <a href="#" class="text-amber-400 hover:underline ml-2">Log In</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero area with centered card -->
+  <main class="py-12 md:m-20">
+    <div class="max-w-7xl mx-auto px-4">
+
+      <!-- centered card (wide) -->
+      <div class="relative">
+        <!-- the card container -->
+        <div class="bg-white rounded-2xl shadow-[0_20px_60px_rgba(32,25,51,0.08)] p-6 md:p-10 animate-floatIn">
+          <!-- Title tab floating centered top -->
+          <div class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div class="bg-white px-6 py-3 rounded-xl shadow-sm border border-transparent text-[#201933] flex items-center gap-3">
+              <!-- icon -->
+              <svg class="w-6 h-6 text-[#201933]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11a4 4 0 10-8 0 4 4 0 008 0zM12 14v7"></path>
+              </svg>
+              <h2 class="text-lg md:text-2xl font-semibold">Register as a User</h2>
+            </div>
+          </div>
+
+          <!-- spacing so title tab doesn't overlap content -->
+          <div class="h-8 md:h-10"></div>
+
+          <!-- Form -->
+          <form id="registerForm" class="grid grid-cols-1 md:grid-cols-3 gap-6" novalidate>
+
+            <!-- Left col -->
+            <div class="space-y-6">
+              <!-- First name -->
+              <div>
+                <label for="firstName" class="block text-sm text-gray-500 mb-2">First Name</label>
+                <input id="firstName" name="firstName" required type="text" placeholder="First name" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-[#201933] focus:border-transparent" />
+              </div>
+
+              <!-- Phone number -->
+              <div>
+                <label for="phone" class="block text-sm text-gray-500 mb-2">Phone Number</label>
+                <input id="phone" name="phone" required type="tel" placeholder="+234..." value="+234" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-[#201933] focus:border-transparent" />
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label for="email" class="block text-sm text-gray-500 mb-2">Email Address</label>
+                <input id="email" name="email" required type="email" placeholder="example@gmail.com" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-[#201933] focus:border-transparent" />
+              </div>
+            </div>
+
+            <!-- Middle col -->
+            <div class="space-y-6">
+              <!-- Last name -->
+              <div>
+                <label for="lastName" class="block text-sm text-gray-500 mb-2">Last Name</label>
+                <input id="lastName" name="lastName" type="text" placeholder="Last name" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-[#201933] focus:border-transparent" />
+              </div>
+
+              <!-- Referral -->
+              <div>
+                <label for="referral" class="block text-sm text-gray-500 mb-2">Referral Code (Optional)</label>
+                <input id="referral" name="referral" type="text" placeholder="Referral code" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-[#201933] focus:border-transparent" />
+              </div>
+
+              <!-- Password -->
+              <div>
+                <label for="password" class="block text-sm text-gray-500 mb-2">Password</label>
+                <div class="relative">
+                  <input id="password" name="password" required type="password" placeholder="Choose a secure password" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-[#201933] focus:border-transparent pr-12" />
+                  <button type="button" id="pwToggle" aria-label="Toggle password visibility" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <!-- eye icon -->
+                    <svg id="eyeOpen" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <svg id="eyeClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.88 9.88A3 3 0 0114.12 14.12"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.46 12.03C3.73 7.97 7.52 5.03 12 5.03c1.28 0 2.49.25 3.62.7"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M20.54 11.97c-1.27 4.06-5.06 6.99-9.54 6.99-1.08 0-2.12-.17-3.08-.47"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right col -->
+            <div class="space-y-6">
+              <!-- Username -->
+              <div>
+                <label for="username" class="block text-sm text-gray-500 mb-2">Username</label>
+                <input id="username" name="username" required type="text" placeholder="Username" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-[#201933] focus:border-transparent" />
+              </div>
+
+              <!-- Gender -->
+              <div>
+                <label class="block text-sm text-gray-500 mb-2">Gender</label>
+                <div class="flex items-center gap-6 text-sm text-gray-700">
+                  <label class="inline-flex items-center gap-2">
+                    <input type="radio" name="gender" value="male" class="w-4 h-4 text-[#201933] focus:ring-[#201933]" />
+                    <span>Male</span>
+                  </label>
+                  <label class="inline-flex items-center gap-2">
+                    <input type="radio" name="gender" value="female" class="w-4 h-4 text-[#201933] focus:ring-[#201933]" />
+                    <span>Female</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- spacer placeholder for alignment on desktop -->
+              <div>
+                <label class="block text-sm text-gray-500 mb-2 invisible">placeholder</label>
+                <div class="h-10"></div>
+              </div>
+            </div>
+
+            <!-- Full width row for email (mobile fallback) - hidden on md because email included above left column already -->
+            <div class="md:hidden">
+              <!-- The mobile stack will already include fields in sequence; this keeps spacing consistent -->
+            </div>
+
+            <!-- Submit button row spans full width -->
+            <div class="md:col-span-3 mt-2">
+              <div class="flex flex-col md:flex-row items-center gap-4">
+                <a href="otp.html"
+                     id="submitBtn" type="submit" class="w-full md:w-1/2 bg-[#201933] text-white py-3 rounded-lg font-semibold hover:opacity-95 transition text-center">Book Ride or Send packages
+                </a>
+
+                <div class="w-full md:w-1/2 text-center">
+                  <div class="flex items-center gap-2 justify-center my-3 text-gray-400">
+                    <span class="h-px w-12 bg-gray-200"></span>
+                    <span class="text-sm">or continue with</span>
+                    <span class="h-px w-12 bg-gray-200"></span>
+                  </div>
+
+                  <div class="flex gap-3 justify-center">
+                    <button type="button" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-md border hover:shadow-sm">
+                      <!-- Facebook icon -->
+                      <svg class="w-5 h-5 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                        <path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07C2 17.06 5.66 21.21 10.44 22v-6.99H8.08v-2.94h2.36V9.85c0-2.33 1.38-3.61 3.5-3.61.99 0 2.03.17 2.03.17v2.23h-1.14c-1.12 0-1.47.7-1.47 1.41v1.7h2.5l-.4 2.94h-2.1V22C18.34 21.21 22 17.06 22 12.07z"/>
+                      </svg>
+                      <span class="text-sm">Sign Up with Facebook</span>
+                    </button>
+
+                    <button type="button" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-md border hover:shadow-sm">
+                      <!-- Google icon -->
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden>
+                        <path fill="#EA4335" d="M12 11.5v3.5h6.4c-.3 1.7-2 5-6.4 5-3.9 0-7-3.2-7-7s3.1-7 7-7c2.2 0 3.6.9 4.4 1.7l2.4-2.3C17.9 3.8 15.2 2.5 12 2.5 6.8 2.5 2.6 6.7 2.6 11.9S6.8 21.3 12 21.3c6 0 10-4.3 10-10 0-.7-.1-1.2-.2-1.7H12z"/>
+                      </svg>
+                      <span class="text-sm">Sign Up with Gmail</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- small footer text -->
+              <div class="mt-6 text-xs text-gray-400 text-center md:text-left">
+                © 2025 Optob Ride. All Rights Reserved. &nbsp; • &nbsp; <a href="#" class="text-gray-500 hover:underline">Privacy Policy</a> &nbsp; / &nbsp; <a href="#" class="text-gray-500 hover:underline">Terms</a>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- JS: password toggle + simple validation -->
+  <script>
+    (function () {
+      const pwToggle = document.getElementById('pwToggle');
+      const password = document.getElementById('password');
+      const eyeOpen = document.getElementById('eyeOpen');
+      const eyeClosed = document.getElementById('eyeClosed');
+
+      pwToggle.addEventListener('click', () => {
+        if (password.type === 'password') {
+          password.type = 'text';
+          eyeOpen.classList.add('hidden');
+          eyeClosed.classList.remove('hidden');
+        } else {
+          password.type = 'password';
+          eyeOpen.classList.remove('hidden');
+          eyeClosed.classList.add('hidden');
+        }
+      });
+
+      // simple client validation + visual feedback
+      const form = document.getElementById('registerForm');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // fields to check
+        const required = [
+          'firstName', 'email', 'phone', 'username', 'password'
+        ];
+        let valid = true;
+
+        required.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (!el.value || el.value.trim() === '' || (id === 'email' && !/^\S+@\S+\.\S+$/.test(el.value))) {
+            el.classList.add('invalid', 'border-red-500');
+            valid = false;
+          } else {
+            el.classList.remove('invalid', 'border-red-500');
+          }
+        });
+
+        // phone basic validation
+        const phone = document.getElementById('phone');
+        if (phone && phone.value.trim().length < 7) {
+          phone.classList.add('invalid','border-red-500');
+          valid = false;
+        }
+
+        if (!valid) {
+          // smooth scroll to first invalid element
+          const firstInvalid = document.querySelector('.invalid');
+          if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        // gather data (for demo; do NOT send real passwords to console in production)
+        const data = {
+          firstName: document.getElementById('firstName').value.trim(),
+          lastName: document.getElementById('lastName').value.trim(),
+          username: document.getElementById('username').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          referral: document.getElementById('referral').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          password: document.getElementById('password').value,
+          gender: (document.querySelector('input[name="gender"]:checked') || {}).value || null
+        };
+
+        // Replace this with your real submission logic (fetch to API)
+        console.log('Form submitted (demo):', data);
+
+        // show success micro-interaction
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Creating account...';
+        setTimeout(() => {
+          btn.textContent = 'Account created — continue';
+          btn.classList.remove('bg-[#201933]');
+          btn.classList.add('bg-green-600');
+        }, 900);
+
+        // optionally redirect or show a success message here
+      });
+
+      // Remove invalid highlight on input
+      document.querySelectorAll('input').forEach(i => {
+        i.addEventListener('input', () => {
+          i.classList.remove('invalid','border-red-500');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

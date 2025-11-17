@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optob Ride Wallet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+  /* only extra bits needed */
+  .animate-spin { animation: fa-spin 1s linear infinite; }
+</style>
+</head>
+
+<body class="bg-[#f7f7f7]">
+
+<!-- =============== MOBILE TOP BAR =============== -->
+<div class="lg:hidden flex items-center justify-between p-4 bg-white shadow fixed">
+  <button id="openMenu" class="text-2xl"><i class="fa-solid fa-bars"></i></button>
+  <!-- <h1 class="font-semibold text-lg">Optob Ride</h1> -->
+  <!-- <img src="https://i.pravatar.cc/40" class="w-10 h-10 rounded-full"> -->
+</div>
+
+<!-- =============== SIDEBAR =============== -->
+
+
+
+<!-- =====  MOBILE DRAWER (slides in from left)  ===== -->
+<aside id="sidebar"
+  class="fixed top-0 left-0 h-full w-64 bg-[#f7e9d4] p-6 space-y-6 shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-40">
+
+  <!-- close button (mobile only) -->
+  <div class="lg:hidden flex items-center justify-between mb-4">
+    <span class="font-bold text-lg text-gray-800">Menu</span>
+    <button id="closeMenu" class="text-2xl text-gray-700">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- brand -->
+  <div class="flex items-center gap-3">
+    <img src="images/image-removebg-preview (26).png" class="w-8" alt="logo">
+    <h2 class="font-bold text-xl">Optob Ride</h2>
+  </div>
+
+  <!-- nav -->
+  <nav class="space-y-4 mt-8">
+    <a href="dashboard.html" class="flex items-center gap-3 text-gray-800 hover:font-semibold">
+      <i class="fa-solid fa-car-side"></i> Order Ride
+    </a>
+    <a href="sendPackage.html" class="flex items-center gap-3 text-gray-800 hover:font-semibold">
+      <i class="fa-solid fa-box"></i> Send Packages
+    </a>
+    <a href="wallet.html" class="flex items-center gap-3 bg-black text-white px-4 py-2 rounded-full font-semibold">
+      <i class="fa-solid fa-wallet"></i> Wallet
+    </a>
+    <a href="Notification.html" class="flex items-center gap-3 text-gray-800 hover:font-semibold">
+      <i class="fa-solid fa-bell"></i> Notifications
+    </a>
+    <a href="#" class="flex items-center gap-3 text-gray-800 hover:font-semibold">
+      <i class="fa-solid fa-gear"></i> Settings
+    </a>
+  </nav>
+
+  <!-- logout -->
+  <a href="index.html" class="flex items-center gap-3 text-red-600 mt-10">
+    <i class="fa-solid fa-right-from-bracket"></i> Log out
+  </a>
+</aside>
+
+<!-- backdrop (mobile only) -->
+<div id="backdrop" class="fixed inset-0 bg-black/40 hidden lg:hidden z-30"></div>
+
+<!-- =============== BACKDROP FOR MOBILE =============== -->
+<!-- <div id="backdrop" class="fixed inset-0 bg-black/40 hidden lg:hidden"></div> -->
+
+
+<!-- =============== MAIN CONTENT =============== -->
+<div class="lg:ml-64 p-8">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-light">welcome <span class="font-bold">Temmy,</span></h1>
+
+    <div class="flex items-center gap-4">
+      <button class="flex items-center gap-2 px-5 py-2 bg-black text-white rounded-full">
+        <i class="fa-regular fa-clock"></i> Activity
+      </button>
+
+      <img src="https://i.pravatar.cc/50" class="w-12 h-12 rounded-full">
+    </div>
+  </div>
+
+  <!-- Wallet Card -->
+  <div class="mt-10 flex flex-col lg:flex-row lg:gap-10">
+
+    <div class="flex-1">
+      <div class="bg-[#2D2CE3] rounded-2xl p-8 text-white shadow-xl relative overflow-hidden ">
+        <span class="bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+
+        <h3 class="mt-6 text-sm opacity-70">Available Balance</h3>
+
+        <div class="flex items-center gap-3 mt-2">
+          <h1 class="text-4xl font-bold"># 50,000</h1>
+          <i class="fa-solid fa-rotate text-lg cursor-pointer"></i>
+        </div>
+
+        <p class="font-light text-gray-400">Use your balance to pay for Rides, Delivery Services and more features</p>
+
+        <!-- <button class="mt-6 bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold">
+          Add funds
+        </button> -->
+        <button id="addFundsBtn" class="mt-6 bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold relative z-10">
+             Add funds
+        </button>
+
+        <!-- card circles design -->
+        <div class="absolute right-10 top-10 flex gap-3">
+          <div class="w-8 h-8 bg-red-500 rounded-full"></div>
+          <div class="w-8 h-8 bg-yellow-400 rounded-full"></div>
+        </div>
+
+      </div>
+
+      <!-- Virtual Account Box -->
+      <div class="mt-8 bg-[#C3F8D0] p-8 rounded-2xl shadow">
+        <h3 class="text-center text-gray-700 font-medium">
+          Fund your wallet with your <span class="font-bold">Optob Virtual Account</span>
+        </h3>
+
+        <div class="mt-6 flex items-center justify-between bg-blue-600 text-white p-4 rounded-xl">
+          <span>Paystack-Optob</span>
+          <span class="text-xl font-bold">2200673890</span>
+          <i class="fa-solid fa-copy cursor-pointer"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= RECENT TRANSACTIONS ================= -->
+    <div class="w-full lg:w-[380px] mt-10 lg:mt-0">
+      <h3 class="font-semibold text-lg mb-4 text-center lg:text-left">Recent Transactions</h3>
+
+      <div class="bg-white p-6 rounded-xl shadow space-y-6">
+
+        <!-- Single Transaction -->
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-green-500"></i>
+            <div>
+              <p class="font-semibold">Account Top Up</p>
+              <small class="text-gray-500">Transfer from First Bank</small>
+            </div>
+          </div>
+          <p class="text-green-600 font-bold">+45,000</p>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-green-500"></i>
+            <div>
+              <p class="font-semibold">Account Top Up</p>
+              <small class="text-gray-500">Transfer from First Bank</small>
+            </div>
+          </div>
+          <p class="text-green-600 font-bold">+5,000</p>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-circle-xmark text-red-500"></i>
+            <div>
+              <p class="font-semibold">Ride Payment</p>
+              <small class="text-gray-500">28th April, 2025</small>
+            </div>
+          </div>
+          <p class="text-red-600 font-bold">-15,000</p>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-circle-xmark text-red-500"></i>
+            <div>
+              <p class="font-semibold">Delivery Payment</p>
+              <small class="text-gray-500">28th April, 2025</small>
+            </div>
+          </div>
+          <p class="text-red-600 font-bold">-9,600</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========  FUNDING MODALS  ========= -->
+<div id="fundingModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-xl w-[90%] max-w-md overflow-hidden">
+
+    <!-- Header -->
+    <div class="bg-indigo-600 text-white p-4 flex items-center justify-between">
+      <span class="font-semibold">Add Funds</span>
+      <button id="closeFunding" class="text-2xl leading-none">&times;</button>
+    </div>
+
+    <!-- Stage 1 : loader -->
+    <div id="stage1" class="p-6 text-center">
+      <div class="w-16 h-16 bg-indigo-100 rounded-full grid place-items-center mx-auto mb-4">
+        <i class=" text-2xl animate-spin"><img src="images/image-removebg-preview (26).png" alt=""></i>
+      </div>
+      <h2 class="text-lg font-bold text-gray-800">Getting Account details</h2>
+      <p class="text-sm text-gray-500 mt-1">Please wait...</p>
+    </div>
+
+    <!-- Stage 2 : account details -->
+    <div id="stage2" class="hidden p-6 text-center">
+      <div class="w-16 h-16 bg-green-100 rounded-full grid place-items-center mx-auto mb-4">
+        <i class="fa-solid fa-check text-2xl text-green-600"></i>
+      </div>
+      <h2 class="text-lg font-bold text-gray-800">Bank Name</h2>
+
+      <div class="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+        <span class="font-semibold text-gray-700">Paystack-Optob</span>
+        <button id="copyBank" class="text-sm bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700">Copy</button>
+      </div>
+
+      <div class="mt-3 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+        <span class="font-semibold text-gray-700">Account Number</span>
+        <div class="flex items-center gap-2">
+          <span id="accNum" class="font-mono text-gray-900">2200673890</span>
+          <button id="copyAcc" class="text-sm bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700">Copy</button>
+        </div>
+      </div>
+
+      <p class="text-xs text-gray-500 mt-4">Search for <span class="font-semibold">Paystack-Optob</span> on your bank app</p>
+      <p class="text-xs text-gray-500">Refresh your wallet page when done.</p>
+
+      <button id="confirmPayment" class="mt-5 w-full bg-green-600 text-white py-2.5 rounded-lg font-semibold hover:bg-green-700">Confirm Payment</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- =============== JAVASCRIPT =============== -->
+<!-- <script>
+  const openMenu = document.getElementById("openMenu");
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("backdrop");
+
+  openMenu.addEventListener("click", () => {
+    sidebar.classList.remove("-translate-x-full");
+    backdrop.classList.remove("hidden");
+  });
+
+  backdrop.addEventListener("click", () => {
+    sidebar.classList.add("-translate-x-full");
+    backdrop.classList.add("hidden");
+  });
+  
+</script> -->
+
+<script>
+  /* ----------  FUNDING FLOW  ---------- */
+//   const addFundsBtn     = document.querySelector('button[class*="bg-white"][class*="text-blue-600"]'); // “Add funds” inside card
+
+const addFundsBtn = document.getElementById('addFundsBtn');
+  const fundingModal    = document.getElementById('fundingModal');
+  const closeFunding    = document.getElementById('closeFunding');
+  const stage1          = document.getElementById('stage1');
+  const stage2          = document.getElementById('stage2');
+  const copyBank        = document.getElementById('copyBank');
+  const copyAcc         = document.getElementById('copyAcc');
+  const accNum          = document.getElementById('accNum');
+  const confirmPayment  = document.getElementById('confirmPayment');
+
+  function openFunding() {
+    fundingModal.classList.remove('hidden');
+    fundingModal.classList.add('flex');
+    stage1.classList.remove('hidden');
+    stage2.classList.add('hidden');
+    /* auto-advance after 2 s */
+   /* auto-advance after 5 s while testing */
+setTimeout(() => {
+  stage1.classList.add('hidden');
+  stage2.classList.remove('hidden');
+}, 5000);
+  }
+  function closeFundingModal() {
+    fundingModal.classList.add('hidden');
+    fundingModal.classList.remove('flex');
+  }
+
+  addFundsBtn.addEventListener('click', openFunding);
+  closeFunding.addEventListener('click', closeFundingModal);
+  fundingModal.addEventListener('click', e => { if (e.target === fundingModal) closeFundingModal(); });
+
+  copyBank.onclick = () => { navigator.clipboard.writeText('Paystack-Optob'); copyBank.textContent = 'Copied!'; setTimeout(()=> copyBank.textContent = 'Copy', 1500); };
+  copyAcc.onclick  = () => { navigator.clipboard.writeText(accNum.textContent); copyAcc.textContent = 'Copied!'; setTimeout(()=> copyAcc.textContent = 'Copy', 1500); };
+
+  confirmPayment.onclick = () => { closeFundingModal(); alert('Payment confirmed! You can refresh your wallet.'); };
+
+  /* ======  MOBILE DRAWER CONTROLS  ====== */
+  const openMenu  = document.getElementById('openMenu');
+  const closeMenu = document.getElementById('closeMenu');
+  const sidebar   = document.getElementById('sidebar');
+  const backdrop  = document.getElementById('backdrop');
+
+  function openDrawer() {
+    sidebar.classList.remove('-translate-x-full');
+    backdrop.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');   // lock scroll
+  }
+  function closeDrawer() {
+    sidebar.classList.add('-translate-x-full');
+    backdrop.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }
+
+  openMenu.addEventListener('click', openDrawer);
+  closeMenu.addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+
+  /* auto-close when user picks a link (optional) */
+  sidebar.querySelectorAll('a').forEach(link =>
+    link.addEventListener('click', () => closeDrawer())
+  );
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Optob Ride — Responsive Dashboard</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@^0.258.0/dist/lucide.min.js"></script>
+
+  <!-- Font (Poppins) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --sidebar-width: 16rem; --sidebar-collapsed: 5.25rem; }
+    html,body { font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    /* small custom helpers */
+    .sidebar-transition { transition: width .28s ease, transform .28s ease, opacity .2s ease; }
+    .btn-focus:focus { outline: 3px solid rgba(99,102,241,0.18); outline-offset: 2px; }
+    /* mobile menu icon animation */
+    .hamburger { transition: transform .28s ease; transform-origin: center; }
+    .hamburger.open { transform: rotate(90deg); }
+    /* ensure iframe maps don't overflow in small modal areas */
+    iframe { border: 0; }
+    /* subtle scrollbar for chat */
+    .thin-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 8px; }
+    
+    /* Full page layout styles */
+    .full-height { height: calc(100vh - 4rem); }
+    .map-full-height { height: calc(100vh - 4rem); }
+    .content-full-height { height: calc(100vh - 4rem); overflow-y: auto; }
+    
+    /* Mobile sidebar without overlay */
+    @media (max-width: 767px) {
+      .mobile-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100%;
+        z-index: 40;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+      .mobile-sidebar.active {
+        transform: translateX(0);
+      }
+    }
+    
+    /* Fixed modal positioning */
+    .modal-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+    
+    .modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal-content {
+      position: relative;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 64rem;
+      max-height: 90vh;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    
+    /* Animation for modal */
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .modal-animate {
+      animation: modalFadeIn 0.3s ease-out;
+    }
+    
+    /* Profile dropdown styles */
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .profile-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      min-width: 220px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      z-index: 1000;
+      margin-top: 8px;
+      padding: 16px;
+    }
+    
+    .profile-dropdown-content.show {
+      display: block;
+    }
+    
+    .profile-dropdown-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      cursor: pointer;
+    }
+    
+    .profile-dropdown-item:not(:last-child) {
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .profile-dropdown-item input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    
+    /* Cancel delivery modal styles */
+    .cancel-modal {
+      max-width: 400px;
+      width: 90%;
+    }
+    
+    .cancel-option {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .cancel-option:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .cancel-option input {
+      margin-right: 12px;
+    }
+    
+    /* Animation for cancelling delivery */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fff9f2] text-slate-800">
+
+  <!-- Sidebar for desktop -->
+  <aside id="sidebar"
+         class="hidden md:flex fixed inset-y-0 left-0 z-40 bg-slate-900 text-slate-100 shadow-lg sidebar-transition
+                w-[var(--sidebar-width)] lg:w-[var(--sidebar-width)] md:w-[var(--sidebar-collapsed)]
+                flex flex-col">
+
+    <!-- Top brand + collapse button -->
+    <div class="flex items-center justify-between px-4 py-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <img src="images/image-removebg-preview (26).png" alt="logo" class="w-8 h-8 rounded-sm object-cover">
+        <div class="hidden lg:block">
+          <div class="font-semibold text-lg">Optob Ride</div>
+          <div class="text-xs text-slate-400">Driver & Booking</div>
+        </div>
+      </div>
+
+      <!-- Collapse toggle (visible md+) -->
+      <button id="collapseBtn" title="Collapse sidebar"
+              class="hidden md:inline-flex items-center justify-center p-2 rounded-md bg-slate-800 hover:bg-slate-700 focus:ring-2 focus:ring-indigo-500 btn-focus">
+        <i data-lucide="chevrons-left" class="lucide-icon w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 overflow-auto py-6 px-2 space-y-1">
+      <a href="dashboard.html" data-route="order" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200 transition-colors bg-amber-300">
+        <i data-lucide="truck" class="w-5 h-5 shrink-0"><img src="images/image-removebg-preview (31).png" alt=""></i>
+        <span class="nav-label hidden md:inline-block">Order Ride</span>
+      </a>
+
+      <a href="sendPackage.html" data-route="send" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors ">
+        <i data-lucide="package" class="w-5 h-5 shrink-0"><img src="images/image-removebg-preview (29).png" alt=""></i>
+        <span class="nav-label hidden md:inline-block">Send Packages</span>
+      </a>
+
+      <a href="#" data-route="wallet" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+        <i data-lucide="wallet" class="w-5 h-5 shrink-0"></i>
+        <span class="nav-label hidden md:inline-block">Wallet</span>
+      </a>
+
+      <a href="#" data-route="notifications" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+        <i data-lucide="bell" class="w-5 h-5 shrink-0"></i>
+        <span class="nav-label hidden md:inline-block">Notifications</span>
+      </a>
+
+      <a href="#" data-route="settings" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+        <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
+        <span class="nav-label hidden md:inline-block">Settings</span>
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-slate-800">
+      <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-colors text-red-400">
+        <i data-lucide="log-out" class="w-5 h-5 shrink-0"></i>
+        <span class="hidden md:inline-block">Log out</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile Sidebar -->
+  <aside id="mobileSidebar" class="mobile-sidebar md:hidden bg-slate-900 text-slate-100 flex flex-col">
+    <!-- Top brand + close button -->
+    <div class="flex items-center justify-between px-4 py-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <img src="images/image-removebg-preview (26).png" alt="logo" class="w-8 h-8 rounded-sm object-cover">
+        <div>
+          <div class="font-semibold text-lg">Optob Ride</div>
+          <div class="text-xs text-slate-400">Driver & Booking</div>
+        </div>
+      </div>
+
+      <button id="closeMobileMenu" class="p-2 rounded-md bg-slate-800 hover:bg-slate-700">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 overflow-auto py-6 px-2 space-y-1">
+      <a href="dashboard.html" data-route="order" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors bg-amber-300">
+        <i data-lucide="truck" class="w-5 h-5 shrink-0"><img src="images/image-removebg-preview (31).png" alt=""></i>
+        <span class="nav-label">Order Ride</span>
+      </a>
+
+      <a href="sendPackage.html" data-route="send" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors ">
+        <i data-lucide="package" class="w-5 h-5 shrink-0"><img src="images/image-removebg-preview (29).png" alt=""></i>
+        <span class="nav-label">Send Packages</span>
+      </a>
+
+      <a href="#" data-route="wallet" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+        <i data-lucide="wallet" class="w-5 h-5 shrink-0"></i>
+        <span class="nav-label">Wallet</span>
+      </a>
+
+      <a href="#" data-route="notifications" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+        <i data-lucide="bell" class="w-5 h-5 shrink-0"></i>
+        <span class="nav-label">Notifications</span>
+      </a>
+
+      <a href="#" data-route="settings" class="nav-item group flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+        <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
+        <span class="nav-label">Settings</span>
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-slate-800">
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-colors text-red-400">
+        <i data-lucide="log-out" class="w-5 h-5 shrink-0"></i>
+        <span>Log out</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile hamburger (top-left) -->
+  <button id="mobileMenuBtn" aria-expanded="false"
+          class="fixed top-4 left-4 z-50 md:hidden bg-indigo-900 text-white p-2 rounded-lg shadow-lg btn-focus"
+          title="Toggle menu">
+    <svg id="menuIcon" class="hamburger w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/>
+    </svg>
+  </button>
+
+  <!-- Main content area -->
+  <div class="md:ml-[var(--sidebar-collapsed)] lg:ml-[var(--sidebar-width)]">
+    <!-- Top navbar (sticky) -->
+    <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-4">
+            <!-- collapse on md -->
+            <button id="miniToggle" class="hidden md:inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 btn-focus" title="Expand/Collapse">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              <span class="text-sm">Toggle</span>
+            </button>
+
+            <h1 class="text-lg font-semibold">Welcome <span class="text-indigo-900 font-bold">Temmy</span></h1>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <button class="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-indigo-900 text-white hover:bg-indigo-800 btn-focus">
+              <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+              <span class="text-sm">Activity</span>
+            </button>
+            
+            <!-- Profile dropdown -->
+            <!-- <div class="profile-dropdown">
+              <div class="flex items-center gap-2 cursor-pointer" id="profileToggle">
+                <img src="https://i.pravatar.cc/40" alt="profile" class="w-10 h-10 rounded-full border-2 border-indigo-900">
+                <i data-lucide="chevron-down" class="w-4 h-4 text-indigo-900"></i>
+              </div>
+              
+              <div class="profile-dropdown-content" id="profileDropdown">
+                <div class="profile-dropdown-item">
+                  <input type="checkbox" id="optobSupport">
+                  <label for="optobSupport">Optob Support</label>
+                </div>
+                <div class="profile-dropdown-item">
+                  <input type="checkbox" id="myOptobFund" checked>
+                  <label for="myOptobFund">My Optob Fund</label>
+                </div>
+                <div class="profile-dropdown-item">
+                  <input type="checkbox" id="ngn50000">
+                  <label for="ngn50000">NGN 50,000</label>
+                </div>
+                <div class="profile-dropdown-item">
+                  <input type="checkbox" id="logout">
+                  <label for="logout">Log out</label>
+                </div>
+              </div>
+            </div> -->
+
+            <!-- Profile dropdown -->
+            <div class="relative">
+              <button id="profileToggle" class="flex items-center gap-2 cursor-pointer">
+                <img src="https://i.pravatar.cc/40" alt="profile" class="w-10 h-10 rounded-full border-2 border-indigo-900">
+                <i data-lucide="chevron-down" class="w-4 h-4 text-indigo-900"></i>
+              </button>
+
+              <div id="profileDropdown" class="hidden absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50">
+                <!-- Profile Header -->
+                <div class="flex items-center gap-3 mb-4">
+                  <img src="https://i.pravatar.cc/40" alt="profile" class="w-12 h-12 rounded-full border-2 border-indigo-900">
+                  <div>
+                    <div class="font-bold text-gray-800">Alaketu Temitope</div>
+                    <div class="text-sm text-gray-500">temitope@example.com</div>
+                  </div>
+                </div>
+
+                <!-- Menu Items -->
+                <div class="space-y-2 text-sm text-gray-700">
+                  <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <i data-lucide="wallet" class="w-4 h-4"></i>
+                    <span>Wallet</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <i data-lucide="newspaper" class="w-4 h-4"></i>
+                    <span>News</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span>Settings</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
+                    <i data-lucide="piggy-bank" class="w-4 h-4"></i>
+                    <span>My Optob Fund</span>
+                  </a>
+                  <div class="flex items-center justify-between p-2">
+                    <span class="text-gray-600">Balance</span>
+                    <span class="font-bold text-green-600">NGN 50,000</span>
+                  </div>
+                  <hr class="my-2">
+                  <a href="index.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-red-100 text-red-600">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Log out</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content layout - Full page -->
+    <main class="w-full">
+      <div class="flex flex-col lg:flex-row h-full">
+        <!-- Left column: Trip form and driver selection -->
+        <div class="w-full lg:w-1/3 xl:w-1/4 content-full-height overflow-y-auto">
+          <div class="p-4 md:p-2">
+            <!-- Trip form section -->
+            <section id="tripSection" class="bg-white p-4 md:p-6 rounded-2xl shadow-md">
+              <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <i data-lucide="map-pin" class="w-5 h-5 text-indigo-600"><img src="images/image-removebg-preview (31).png" alt=""></i>
+                <span>Find Driver</span>
+              </h2>
+
+              <form id="rideForm" class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Pickup Location</label>
+                  <div class="relative">
+                    <input type="text" id="pickupLocation" placeholder="Enter pickup point"
+                           class="w-full border rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    <i data-lucide="map-pin" class="absolute left-3 top-3 w-4 h-4 text-gray-400"></i>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Dropoff Location</label>
+                  <div class="relative">
+                    <input type="text" id="dropoffLocation" placeholder="Enter destination"
+                           class="w-full border rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    <i data-lucide="corner-down-right" class="absolute left-3 top-3 w-4 h-4 text-gray-400"></i>
+                  </div>
+                </div>
+
+                <div id="stopsContainer" class="space-y-2"></div>
+
+                <button id="addStopBtn" type="button" class="inline-flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-500 btn-focus">
+                  <i data-lucide="plus-circle" class="w-4 h-4"><img src="images/image-removebg-preview (30).png" alt=""></i>
+                  <span>Add Stop</span>
+                </button>
+
+                <div class="flex gap-3">
+                  <div class="flex-1">
+                    <label class="block text-sm font-medium mb-1">Date</label>
+                    <input type="date" id="rideDate" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  </div><br>
+                  <div class="flex-1">
+                    <label class="block text-sm font-medium mb-1">Time</label>
+                    <input type="time" id="rideTime" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  </div>
+                </div>
+
+                <div id="priceEstimation" class="price-estimation bg-gray-50 p-4 rounded-lg border border-gray-200 hidden">
+                  <h3 class="font-bold text-lg mb-2 text-gray-800">Price Estimation</h3>
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Estimated Price:</span>
+                    <span id="estimatedPrice" class="font-bold text-lg text-indigo-700">₦0.00</span>
+                  </div>
+
+                  <div class="mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="text-gray-600">Your Price:</span>
+                      <div class="flex items-center">
+                        <span id="yourPrice" class="font-bold text-xl text-green-600">₦0.00</span>
+                        <span id="priceChangeIndicator" class="price-change-indicator ml-2 text-xs"></span>
+                      </div>
+                    </div>
+
+                    <div class="price-counter flex items-center justify-between bg-white rounded-md p-2 border">
+                      <button id="decreaseBtn" class="counter-btn w-10 h-10 rounded-full bg-indigo-900 text-white flex items-center justify-center disabled:opacity-50" disabled>
+                        <i data-lucide="minus" class="w-4 h-4"></i>
+                      </button>
+                      <div id="priceValue" class="text-lg font-bold min-w-[90px] text-center">₦0</div>
+                      <button id="increaseBtn" class="counter-btn w-10 h-10 rounded-full bg-indigo-900 text-white flex items-center justify-center">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+
+                    <div class="mt-2 text-xs text-gray-500 text-center">
+                      Tap + or - to adjust your price
+                    </div>
+                  </div>
+                </div>
+
+                <button id="findDriverBtn" type="button" class="w-full bg-gray-700 text-white font-semibold py-2 rounded-lg hover:bg-indigo-900 transition-all duration-300 btn-focus">
+                  Find a Driver
+                </button>
+
+                
+              </form>
+            </section>
+
+            <!-- Driver selection section -->
+            <section id="driverSection" class="bg-white p-4 md:p-6 rounded-2xl shadow-md mt-6 hidden">
+              <button id="backButton" class="back-button inline-flex items-center gap-2 bg-indigo-900 text-white px-3 py-2 rounded-md hover:bg-indigo-800 mb-4">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> <span>Back to Search</span>
+              </button>
+
+              <h1 class="text-xl font-semibold mb-6">Available Rides</h1>
+
+              <div id="driverCards" class="space-y-4"></div>
+
+              <div class="trip-summary mt-6 bg-white border p-4 rounded-lg">
+                <h3 class="font-bold text-lg mb-3">Your Trip</h3>
+                <div class="trip-location flex items-center gap-2 mb-2">From:
+                  <i data-lucide="map-pin" class="w-4 h-4 text-indigo-600"></i>
+                  <span id="summaryPickup" class="text-sm text-slate-700">Pickup location</span>
+                </div>
+                <div class="trip-location flex items-center gap-2 mb-2">To:
+                  <i data-lucide="corner-down-right" class="w-4 h-4 text-indigo-600"></i>
+                  <span id="summaryDropoff" class="text-sm text-slate-700">Dropoff location</span>
+                </div>
+                <div id="summaryStops" class="mt-2 space-y-1 text-sm text-gray-600"></div>
+                <div class="trip-details flex justify-between text-sm text-gray-600">
+                  <span id="summaryDate">Today</span>
+                  <span id="summaryTime">Now</span>
+                </div>
+
+                <div class="price-display flex justify-between mt-3 text-sm text-gray-600">
+                  <span>Estimated Price:</span> <span id="summaryEstimatedPrice" class="font-bold">₦0.00</span>
+                </div>
+                <div class="price-display flex justify-between mt-1 text-sm text-gray-600">
+                  <span>Your Price:</span> <span id="summaryYourPrice" class="font-bold">₦0.00</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Right column: Map - Full height and width -->
+        <div class="w-full lg:w-2/3 xl:w-3/4 map-full-height">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12677.781617956537!2d4.343789248946973!3d51.44507233734461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3fbc616c5bdb7%3A0x3d66b932c02fd4!2sBoom%2C%20Belgium!5e0!3m2!1sen!2sbe!4v1697452979835!5m2!1sen!2sbe"
+            class="w-full h-full" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Driver Modal - Fixed positioning -->
+  <div id="driverModal" class="modal-container hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-animate">
+      <div class="p-4 md:p-6">
+        <!-- Modal header with close button -->
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-gray-800">Driver Details</h2>
+          <button id="modalCloseBtn" class="inline-flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            <i data-lucide="x" class="w-4 h-4"></i> Close
+          </button>
+        </div>
+
+        <div class="flex items-start justify-between gap-4 mb-6">
+          <div class="flex items-start gap-4">
+            <img id="modalDriverAvatar" class="w-20 h-20 rounded-full object-cover border-2" src="" alt="driver">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="modalDriverName" class="text-xl font-bold"></h2>
+                <span id="modalVerified" class="text-sm text-green-600 font-semibold hidden"><i data-lucide="check-circle" class="w-4 h-4"></i> Verified</span>
+              </div>
+              <div id="modalDriverRating" class="star-rating mt-1 text-yellow-400"></div>
+              <div id="modalDriverPhone" class="text-sm text-gray-600 mt-1"></div>
+              <div id="modalDriverETA" class="text-sm text-indigo-700 font-semibold mt-1"></div>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-end gap-2">
+            <div class="text-right">
+              <div class="text-sm text-gray-500">Price</div>
+              <div id="modalDriverPrice" class="font-bold text-lg text-indigo-900">NGN 0</div>
+            </div>
+
+            <div class="flex gap-2">
+              <a id="callBtn" href="#" class="inline-flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                <i data-lucide="phone" class="w-4 h-4"></i> Call
+              </a>
+              <button id="bookBtn" class="inline-flex items-center gap-2 px-3 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800">
+                <i data-lucide="check" class="w-4 h-4"></i> Book
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="col-span-2">
+            <div class="flex items-center gap-4 bg-gray-50 rounded-lg p-3">
+              <img id="modalCarImage" src="" alt="car" class="w-28 h-20 object-cover rounded-md">
+              <div>
+                <div id="modalCarModel" class="font-semibold"></div>
+                <div id="modalCarColor" class="text-sm text-gray-600"></div>
+                <div id="modalCarPlate" class="text-sm text-gray-600 mt-1"></div>
+              </div>
+            </div>
+
+            <div class="mt-4 bg-white border rounded-lg p-3">
+              <div id="modalChatBox" class="thin-scroll max-h-48 overflow-y-auto"></div>
+
+              <div class="mt-3 flex gap-2">
+                <input id="modalChatInput" type="text" placeholder="Type a message..." class="flex-1 border rounded-lg px-3 py-2 focus:outline-none">
+                <button id="modalSendBtn" class="bg-indigo-900 text-white px-4 py-2 rounded-lg hover:bg-indigo-800">Send</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-span-1 space-y-4">
+            <div class="bg-gray-50 rounded-lg p-3">
+              <div class="font-semibold">Driver Features</div>
+              <div id="modalDriverFeatures" class="text-sm text-gray-600 mt-2"></div>
+
+              <div class="mt-4">
+                <div class="font-semibold">Capacity</div>
+                <div id="modalDriverCapacity" class="text-sm text-gray-600 mt-1"></div>
+              </div>
+
+              <div class="mt-4">
+                <div class="font-semibold">Distance</div>
+                <div id="modalDriverDistance" class="text-sm text-green-600 mt-1"></div>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-3">
+              <div class="font-semibold mb-2">Driver Location</div>
+              <div class="map-container h-48 rounded-lg overflow-hidden relative">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12677.781617956537!2d4.343789248946973!3d51.44507233734461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3fbc616c5bdb7%3A0x3d66b932c02fd4!2sBoom%2C%20Belgium!5e0!3m2!1sen!2sbe!4v1697452979835!5m2!1sen!2sbe" class="w-full h-full" loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <button class="driver-location w-full bg-green-600 text-white rounded-md py-2">DRIVER LOCATION</button>
+              <!-- Cancel Delivery Button -->
+              <button id="testCancelBtn" class="w-full bg-red-600 text-white rounded-md py-2 flex items-center justify-center gap-2">
+                <i data-lucide="x" class="w-4 h-4"></i> Cancel Ride
+              </button>
+              <button id="modalBackBtn" class="w-full bg-gray-600 text-white rounded-md py-2 flex items-center justify-center gap-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Drivers
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Delivery Modals -->
+  <!-- First modal: Confirm cancellation -->
+  <div id="cancelDeliveryModal1" class="modal-container hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-animate cancel-modal">
+      <div class="p-6 text-center">
+        <i class="justify-center">
+          <img style="margin-left: 100px;"  src="images/image-removebg-preview (28).png" alt="">
+        </i>
+        <h2 class="text-xl font-bold mb-4 text-red-600">Are you sure you want to Cancel the Ride?</h2>
+        <div class="flex justify-center gap-4 mt-6">
+          <button id="continueDeliveryBtn" class="px-4 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800">
+            Continue Ride
+          </button>
+          <button id="cancelDeliveryBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            Cancel Ride
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second modal: Reasons for cancellation -->
+  <div id="cancelDeliveryModal2" class="modal-container hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-animate cancel-modal">
+      <div class="p-6">
+        <h2 class="text-xl font-bold mb-4">Reasons for Cancelling Ride</h2>
+        <p class="text-gray-600 mb-6">Please tell us why you want to Cancel the Ride, this feedback can help us develop a better service to next time.</p>
+        
+        <div class="space-y-2 mb-6">
+          <div class="cancel-option">
+            <input type="radio" id="reason1" name="cancelReason" value="Courier Late">
+            <label for="reason1">Bad Car</label>
+          </div>
+          <div class="cancel-option">
+            <input type="radio" id="reason2" name="cancelReason" value="Wrong Courier">
+            <label for="reason2">Driving Late</label>
+          </div>
+          <div class="cancel-option">
+            <input type="radio" id="reason3" name="cancelReason" value="Package Damaged">
+            <label for="reason3">Wrong Driver</label>
+          </div>
+          <div class="cancel-option">
+            <input type="radio" id="reason4" name="cancelReason" value="Courier too small for my package">
+            <label for="reason4">Dont like the car</label>
+          </div>
+          <div class="cancel-option">
+            <input type="radio" id="reason5" name="cancelReason" value="Others">
+            <label for="reason5">Others</label>
+          </div>
+          <div class="mt-2">
+            <textarea id="otherReason" placeholder="Please specify..." class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 hidden"></textarea>
+          </div>
+        </div>
+        
+        <div class="flex justify-center">
+          <button id="confirmCancelBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            Cancel Ride
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Third modal: Cancelling animation -->
+  <div id="cancelDeliveryModal3" class="modal-container hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-animate cancel-modal">
+      <div class="p-6 text-center">
+        <div class="flex justify-center mb-4">
+          <i data-lucide="loader" class="w-12 h-12 text-indigo-900 spinner"><img src="images/image-removebg-preview (26).png" alt=""></i>
+        </div>
+        <h2 class="text-xl font-bold">Cancelling Ride...</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fourth modal: Delivery cancelled -->
+  <div id="cancelDeliveryModal4" class="modal-container hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-animate cancel-modal">
+      <div class="p-6 text-center">
+        <div class="flex justify-center mb-4">
+          <i data-lucide="check-circle" class="w-12 h-12 text-green-600"><img src="images/image-removebg-preview (27).png" alt=""></i></i>
+        </div>
+        <h2 class="text-xl text-red-600 font-bold">Ride Cancelled</h2>
+        <button id="closeCancelModal" class="mt-6 px-4 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Initialize lucide icons
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    /* -------------------------
+       Profile Dropdown
+       ------------------------- */
+    // const profileToggle = document.getElementById('profileToggle');
+    // const profileDropdown = document.getElementById('profileDropdown');
+
+    // profileToggle.addEventListener('click', () => {
+    //   profileDropdown.classList.toggle('show');
+    // });
+
+    // // Close dropdown when clicking outside
+    // document.addEventListener('click', (e) => {
+    //   if (!profileToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+    //     profileDropdown.classList.remove('show');
+    //   }
+    // });
+
+    const profileToggle = document.getElementById('profileToggle');
+const profileDropdown = document.getElementById('profileDropdown');
+
+profileToggle.addEventListener('click', () => {
+  profileDropdown.classList.toggle('hidden');
+});
+
+document.addEventListener('click', (e) => {
+  if (!profileToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+    profileDropdown.classList.add('hidden');
+  }
+});
+
+    /* -------------------------
+       Cancel Delivery Flow
+       ------------------------- */
+    const cancelDeliveryModal1 = document.getElementById('cancelDeliveryModal1');
+    const cancelDeliveryModal2 = document.getElementById('cancelDeliveryModal2');
+    const cancelDeliveryModal3 = document.getElementById('cancelDeliveryModal3');
+    const cancelDeliveryModal4 = document.getElementById('cancelDeliveryModal4');
+    const continueDeliveryBtn = document.getElementById('continueDeliveryBtn');
+    const cancelDeliveryBtn = document.getElementById('cancelDeliveryBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    const closeCancelModal = document.getElementById('closeCancelModal');
+    const cancelReasons = document.querySelectorAll('input[name="cancelReason"]');
+    const otherReason = document.getElementById('otherReason');
+    const testCancelBtn = document.getElementById('testCancelBtn');
+
+    // Show first cancel modal (you can trigger this from anywhere in your app)
+    function showCancelDeliveryModal() {
+      cancelDeliveryModal1.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Continue delivery (close modal)
+    continueDeliveryBtn.addEventListener('click', () => {
+      cancelDeliveryModal1.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+
+    // Proceed to reasons modal
+    cancelDeliveryBtn.addEventListener('click', () => {
+      cancelDeliveryModal1.classList.add('hidden');
+      cancelDeliveryModal2.classList.remove('hidden');
+    });
+
+    // Handle "Others" reason selection
+    cancelReasons.forEach(reason => {
+      reason.addEventListener('change', () => {
+        if (reason.value === 'Others') {
+          otherReason.classList.remove('hidden');
+        } else {
+          otherReason.classList.add('hidden');
+        }
+      });
+    });
+
+    // Confirm cancellation
+    confirmCancelBtn.addEventListener('click', () => {
+      const selectedReason = document.querySelector('input[name="cancelReason"]:checked');
+      if (!selectedReason) {
+        alert('Please select a reason for cancellation');
+        return;
+      }
+
+      cancelDeliveryModal2.classList.add('hidden');
+      cancelDeliveryModal3.classList.remove('hidden');
+
+      // Simulate cancellation process
+      setTimeout(() => {
+        cancelDeliveryModal3.classList.add('hidden');
+        cancelDeliveryModal4.classList.remove('hidden');
+      }, 2000);
+    });
+
+    // Close final modal
+    closeCancelModal.addEventListener('click', () => {
+      cancelDeliveryModal4.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+
+    // Test cancel delivery button in driver modal
+    testCancelBtn.addEventListener('click', () => {
+      closeDriverModal(); // Close driver modal first
+      showCancelDeliveryModal();
+    });
+
+    /* -------------------------
+       Sidebar behavior & toggles
+       ------------------------- */
+    const sidebar = document.getElementById('sidebar');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMobileMenu = document.getElementById('closeMobileMenu');
+    const menuIcon = document.getElementById('menuIcon');
+    const collapseBtn = document.getElementById('collapseBtn');
+    const miniToggle = document.getElementById('miniToggle');
+
+    // Mobile sidebar toggle
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileSidebar.classList.add('active');
+      menuIcon.classList.add('open');
+      mobileMenuBtn.setAttribute('aria-expanded', 'true');
+    });
+
+    closeMobileMenu.addEventListener('click', () => {
+      mobileSidebar.classList.remove('active');
+      menuIcon.classList.remove('open');
+      mobileMenuBtn.setAttribute('aria-expanded', 'false');
+    });
+
+    // Desktop sidebar states
+    let sidebarState = 'expanded';
+
+    function applySidebarState() {
+      if (sidebarState === 'collapsed') {
+        document.querySelectorAll('.nav-label').forEach(el => el.classList.add('hidden'));
+        sidebar.style.width = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-collapsed') || '5.25rem';
+        collapseBtn.querySelector('i')?.setAttribute('data-icon', 'chevrons-right');
+      } else if (sidebarState === 'expanded') {
+        document.querySelectorAll('.nav-label').forEach(el => el.classList.remove('hidden'));
+        sidebar.style.width = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width') || '16rem';
+        collapseBtn.querySelector('i')?.setAttribute('data-icon', 'chevrons-left');
+      }
+      if (typeof lucide !== 'undefined') lucide.replace();
+    }
+
+    function setInitialSidebarState() {
+      const w = window.innerWidth;
+      if (w >= 768 && w < 1024) sidebarState = 'collapsed';
+      else sidebarState = 'expanded';
+      applySidebarState();
+    }
+
+    setInitialSidebarState();
+    window.addEventListener('resize', setInitialSidebarState);
+
+    // Collapse button (md+)
+    collapseBtn.addEventListener('click', () => {
+      sidebarState = (sidebarState === 'collapsed') ? 'expanded' : 'collapsed';
+      applySidebarState();
+    });
+
+    // Mini toggle (in the header) - same as collapse for convenience
+    miniToggle.addEventListener('click', () => {
+      sidebarState = (sidebarState === 'collapsed') ? 'expanded' : 'collapsed';
+      applySidebarState();
+    });
+
+    /* -------------------------
+       Restore lucide icons after any DOM changes (e.g. label toggles)
+       ------------------------- */
+    function refreshIcons() {
+      if (typeof lucide !== 'undefined') lucide.replace();
+    }
+
+    /* -------------------------
+       Existing app JS: forms, price, drivers, modal
+       ------------------------- */
+
+    // form & price elements
+    const rideForm = document.getElementById('rideForm');
+    const pickupLocation = document.getElementById('pickupLocation');
+    const dropoffLocation = document.getElementById('dropoffLocation');
+    const rideDate = document.getElementById('rideDate');
+    const rideTime = document.getElementById('rideTime');
+    const priceEstimation = document.getElementById('priceEstimation');
+    const estimatedPrice = document.getElementById('estimatedPrice');
+    const yourPrice = document.getElementById('yourPrice');
+    const findDriverBtn = document.getElementById('findDriverBtn');
+
+    const decreaseBtn = document.getElementById('decreaseBtn');
+    const increaseBtn = document.getElementById('increaseBtn');
+    const priceValue = document.getElementById('priceValue');
+    const priceChangeIndicator = document.getElementById('priceChangeIndicator');
+
+    const stopsContainer = document.getElementById('stopsContainer');
+    const addStopBtn = document.getElementById('addStopBtn');
+
+    const tripSection = document.getElementById('tripSection');
+    const driverSection = document.getElementById('driverSection');
+    const backButton = document.getElementById('backButton');
+    const driverCards = document.getElementById('driverCards');
+    const summaryPickup = document.getElementById('summaryPickup');
+    const summaryDropoff = document.getElementById('summaryDropoff');
+    const summaryDate = document.getElementById('summaryDate');
+    const summaryTime = document.getElementById('summaryTime');
+    const summaryEstimatedPrice = document.getElementById('summaryEstimatedPrice');
+    const summaryYourPrice = document.getElementById('summaryYourPrice');
+
+    // set defaults
+    const today = new Date();
+    rideDate.value = today.toISOString().split('T')[0];
+    const now = new Date();
+    const minutes = Math.ceil(now.getMinutes() / 15) * 15;
+    now.setMinutes(minutes === 60 ? 0 : minutes);
+    if (minutes === 60) now.setHours(now.getHours() + 1);
+    rideTime.value = now.toTimeString().slice(0,5);
+
+    let currentPrice = 0;
+    let estimatedBasePrice = 0;
+    const MIN_PRICE = 500;
+    const MAX_PRICE = 50000;
+    const STEP = 100;
+    let stopCount = 0;
+
+    const drivers = [
+      { id:1, name:"Mr. Osas", rating:4, price:5500, features:"Available • AC", distance:"2 min Away", capacity:"4 passengers", profilePic:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80", car:"Toyota Camry 2020", carColor:"Black", carImage:"https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=800&q=60", plate:"ABC-234-XY", phone:"+2348012345678", eta:"2 min", verified:true },
+      { id:2, name:"Samson C.", rating:4, price:6000, features:"Child seat available", distance:"3 min Away", capacity:"4 passengers", profilePic:"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80", car:"Honda Accord 2019", carColor:"White", carImage:"https://images.unsplash.com/photo-1558980664-10f5f7f9c3b2?auto=format&fit=crop&w=800&q=60", plate:"XYZ-987-RT", phone:"+2348098765432", eta:"3 min", verified:false },
+      { id:3, name:"Abel Smith", rating:5, price:5300, features:"Extra trunk space", distance:"4 min Away", capacity:"4 passengers", profilePic:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80", car:"Nissan Altima 2021", carColor:"Silver", carImage:"https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=60", plate:"LMN-456-OP", phone:"+2348123456789", eta:"4 min", verified:true }
+    ];
+
+    function formatCurrency(n) { return `NGN ${n.toLocaleString()}`; }
+    function createStarHtml(rating) {
+      let s = '';
+      for (let i=0;i<5;i++){
+        s += (i<rating) ? '<svg class="inline w-4 h-4 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.786 1.403 8.182L12 18.896 4.663 23.178l1.403-8.182L.132 9.21l8.2-1.192z"/></svg>' : '<svg class="inline w-4 h-4 text-slate-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.786 1.403 8.182L12 18.896 4.663 23.178l1.403-8.182L.132 9.21l8.2-1.192z"/></svg>';
+      }
+      return s;
+    }
+
+    function createStopInput() {
+      stopCount++;
+      const stopId = `stop-${stopCount}`;
+      const stopItem = document.createElement('div');
+      stopItem.className = 'stop-item flex items-center gap-2';
+      stopItem.id = stopId;
+      stopItem.innerHTML = `
+        <div class="relative flex-1">
+          <input type="text" placeholder="Enter stop location" class="w-full border rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <i data-lucide="circle" class="absolute left-3 top-3 w-4 h-4 text-gray-400"></i>
+        </div>
+        <button type="button" class="delete-stop-btn inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-500 text-white hover:bg-red-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      `;
+      stopsContainer.appendChild(stopItem);
+      if (typeof lucide !== 'undefined') lucide.replace();
+      const deleteBtn = stopItem.querySelector('.delete-stop-btn');
+      deleteBtn.addEventListener('click', () => {
+        stopItem.remove();
+        checkFormCompletion();
+      });
+      const input = stopItem.querySelector('input');
+      input.addEventListener('input', checkFormCompletion);
+    }
+
+    function updatePriceDisplay() {
+      priceValue.textContent = `₦${currentPrice.toLocaleString()}`;
+      yourPrice.textContent = `₦${currentPrice.toLocaleString()}`;
+      const diff = currentPrice - estimatedBasePrice;
+      if (diff > 0) {
+        priceChangeIndicator.textContent = `+₦${diff.toLocaleString()}`;
+        priceChangeIndicator.className = 'price-change-indicator ml-2 text-xs text-green-500';
+      } else if (diff < 0) {
+        priceChangeIndicator.textContent = `-₦${Math.abs(diff).toLocaleString()}`;
+        priceChangeIndicator.className = 'price-change-indicator ml-2 text-xs text-red-500';
+      } else {
+        priceChangeIndicator.textContent = '';
+      }
+      decreaseBtn.disabled = currentPrice <= MIN_PRICE;
+      increaseBtn.disabled = currentPrice >= MAX_PRICE;
+      priceValue.animate([{ transform: 'scale(1.02)' }, { transform: 'scale(1)' }], { duration: 260 });
+    }
+
+    function checkFormCompletion() {
+      const pickupFilled = pickupLocation.value.trim() !== '';
+      const dropoffFilled = dropoffLocation.value.trim() !== '';
+      const dateFilled = rideDate.value !== '';
+      const timeFilled = rideTime.value !== '';
+      const stopInputs = document.querySelectorAll('#stopsContainer input');
+      let allStopsFilled = true;
+      stopInputs.forEach(input => { if (input.value.trim() === '') allStopsFilled = false; });
+      const isComplete = pickupFilled && dropoffFilled && dateFilled && timeFilled && (stopInputs.length === 0 || allStopsFilled);
+      if (isComplete) {
+        calculatePrice();
+        priceEstimation.classList.remove('hidden');
+      } else {
+        priceEstimation.classList.add('hidden');
+      }
+    }
+
+    function calculatePrice() {
+      const basePrice = Math.floor(Math.random() * (5000 - 1500 + 1)) + 1500;
+      const stopCountLocal = document.querySelectorAll('#stopsContainer .stop-item').length;
+      const stopFee = stopCountLocal * 200;
+      estimatedBasePrice = basePrice + stopFee;
+      currentPrice = estimatedBasePrice;
+      estimatedPrice.textContent = `₦${estimatedBasePrice.toLocaleString()}`;
+      updatePriceDisplay();
+    }
+
+    function adjustPrice(direction) {
+      if (direction === 'increase' && currentPrice < MAX_PRICE) {
+        currentPrice += STEP; updatePriceDisplay();
+      } else if (direction === 'decrease' && currentPrice > MIN_PRICE) {
+        currentPrice -= STEP; updatePriceDisplay();
+      }
+    }
+
+    function renderDriverCards() {
+      driverCards.innerHTML = '';
+      drivers.forEach((driver, idx) => {
+        const card = document.createElement('div');
+        card.className = 'driver-card bg-white p-4 rounded-lg shadow-sm border';
+        card.innerHTML = `
+          <div class="flex items-center gap-4">
+            <img src="${driver.profilePic}" alt="${driver.name}" class="w-14 h-14 rounded-full object-cover border">
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold">${driver.name} ${driver.verified ? '<span class="text-green-600 text-sm ml-2">✔</span>' : ''}</h3>
+                  <div class="text-xs mt-1">${driver.features}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm text-gray-500">${driver.distance}</div>
+                  <div class="font-bold">${formatCurrency(driver.price)}</div>
+                </div>
+              </div>
+              <div class="mt-3 flex items-center justify-between">
+                <div class="text-sm text-gray-500">${driver.car} • ${driver.carColor}</div>
+                <div class="flex flex-col items-end gap-2">
+                  <button class="get-ride-btn inline-flex items-center gap-2 px-3 py-2 bg-indigo-900 text-white rounded-md" data-index="${idx}">
+                     Get Ride
+                  </button>
+                  <img src="${driver.carImage}" alt="${driver.car}" class="w-24 h-14 object-cover rounded-md mt-2">
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        driverCards.appendChild(card);
+      });
+      if (typeof lucide !== 'undefined') lucide.replace();
+      document.querySelectorAll('.get-ride-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.currentTarget.getAttribute('data-index'),10);
+          openDriverModal(idx);
+        });
+      });
+    }
+
+    function showDriverSelection() {
+      summaryPickup.textContent = pickupLocation.value || 'Pickup location';
+      summaryDropoff.textContent = dropoffLocation.value || 'Dropoff location';
+
+      // ✅ Render stop summaries
+const summaryStops = document.getElementById('summaryStops');
+summaryStops.innerHTML = '';
+const stopInputs = document.querySelectorAll('#stopsContainer input');
+stopInputs.forEach((input, index) => {
+  if (input.value.trim()) {
+    const stopDiv = document.createElement('div');
+    stopDiv.className = 'flex items-center gap-2';
+    stopDiv.innerHTML = `
+      <i data-lucide="circle" class="w-3 h-3 text-gray-400"></i>
+      <span>Stop ${index + 1}: ${input.value.trim()}</span>
+    `;
+    summaryStops.appendChild(stopDiv);
+  }
+});
+if (typeof lucide !== 'undefined') lucide.replace();
+      const dateObj = new Date(rideDate.value);
+      const options = { weekday: 'short', month: 'short', day: 'numeric' };
+      summaryDate.textContent = dateObj.toLocaleDateString('en-US', options);
+      summaryTime.textContent = rideTime.value || 'Now';
+      summaryEstimatedPrice.textContent = `₦${estimatedBasePrice.toLocaleString()}`;
+      summaryYourPrice.textContent = `₦${currentPrice.toLocaleString()}`;
+      renderDriverCards();
+      tripSection.classList.add('hidden');
+      driverSection.classList.remove('hidden');
+    }
+    function showTripForm() {
+      driverSection.classList.add('hidden');
+      tripSection.classList.remove('hidden');
+    }
+
+    // event wiring
+    pickupLocation.addEventListener('input', checkFormCompletion);
+    dropoffLocation.addEventListener('input', checkFormCompletion);
+    rideDate.addEventListener('change', checkFormCompletion);
+    rideTime.addEventListener('change', checkFormCompletion);
+
+    rideForm.addEventListener('submit', (e) => e.preventDefault());
+    decreaseBtn.addEventListener('click', (e) => { e.preventDefault(); adjustPrice('decrease'); });
+    increaseBtn.addEventListener('click', (e) => { e.preventDefault(); adjustPrice('increase'); });
+    addStopBtn.addEventListener('click', (e) => { e.preventDefault(); createStopInput(); checkFormCompletion(); });
+    findDriverBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (pickupLocation.value.trim() === '' || dropoffLocation.value.trim() === '') {
+        alert('Please fill pickup and dropoff locations');
+        return;
+      }
+      showDriverSelection();
+    });
+    backButton.addEventListener('click', (e) => { e.preventDefault(); showTripForm(); });
+
+    /* -------------------------
+       Driver modal behavior - FIXED
+       ------------------------- */
+    const driverModal = document.getElementById('driverModal');
+    const modalDriverAvatar = document.getElementById('modalDriverAvatar');
+    const modalDriverName = document.getElementById('modalDriverName');
+    const modalVerified = document.getElementById('modalVerified');
+    const modalDriverRating = document.getElementById('modalDriverRating');
+    const modalDriverPhone = document.getElementById('modalDriverPhone');
+    const modalDriverETA = document.getElementById('modalDriverETA');
+    const modalDriverPrice = document.getElementById('modalDriverPrice');
+    const modalCarImage = document.getElementById('modalCarImage');
+    const modalCarModel = document.getElementById('modalCarModel');
+    const modalCarColor = document.getElementById('modalCarColor');
+    const modalCarPlate = document.getElementById('modalCarPlate');
+    const modalDriverFeatures = document.getElementById('modalDriverFeatures');
+    const modalDriverCapacity = document.getElementById('modalDriverCapacity');
+    const modalDriverDistance = document.getElementById('modalDriverDistance');
+    const modalChatBox = document.getElementById('modalChatBox');
+    const modalChatInput = document.getElementById('modalChatInput');
+    const modalSendBtn = document.getElementById('modalSendBtn');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalBackBtn = document.getElementById('modalBackBtn');
+    const callBtn = document.getElementById('callBtn');
+    const bookBtn = document.getElementById('bookBtn');
+
+    let activeDriver = null;
+
+    function openDriverModal(index) {
+      activeDriver = drivers[index];
+      modalDriverAvatar.src = activeDriver.profilePic;
+      modalDriverName.textContent = activeDriver.name;
+      modalVerified.classList.toggle('hidden', !activeDriver.verified);
+      modalDriverRating.innerHTML = createStarHtml(activeDriver.rating);
+      modalDriverPhone.textContent = activeDriver.phone;
+      modalDriverETA.textContent = `${activeDriver.eta} • ${activeDriver.distance}`;
+      modalDriverPrice.textContent = formatCurrency(activeDriver.price);
+      modalCarImage.src = activeDriver.carImage;
+      modalCarModel.textContent = activeDriver.car;
+      modalCarColor.textContent = `Color: ${activeDriver.carColor}`;
+      modalCarPlate.textContent = `Plate: ${activeDriver.plate}`;
+      modalDriverFeatures.textContent = activeDriver.features;
+      modalDriverCapacity.textContent = activeDriver.capacity;
+      modalDriverDistance.textContent = activeDriver.distance;
+      callBtn.href = `tel:${activeDriver.phone.replace(/\s+/g,'')}`;
+      modalChatBox.innerHTML = '';
+      appendSystemMessage(`You're connected with ${activeDriver.name}. Say hi 👋`);
+      appendDriverMessage(`${activeDriver.name} is on the way — ETA ${activeDriver.eta}`);
+      
+      // Show modal with proper positioning
+      driverModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      setTimeout(()=> modalChatInput.focus(), 300);
+    }
+
+    function closeDriverModal() {
+      driverModal.classList.add('hidden');
+      document.body.style.overflow = '';
+      activeDriver = null;
+      modalChatBox.innerHTML = '';
+    }
+
+    function appendUserMessage(text) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex justify-end mb-2';
+      wrapper.innerHTML = `<div class="max-w-[80%]"><div class="bg-indigo-900 text-white px-3 py-2 rounded-lg inline-block">${escapeHtml(text)}</div><div class="text-xs text-gray-400 text-right mt-1">${timeStamp()}</div></div>`;
+      modalChatBox.appendChild(wrapper);
+      modalChatBox.scrollTop = modalChatBox.scrollHeight;
+    }
+    function appendDriverMessage(text) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex justify-start mb-2';
+      wrapper.innerHTML = `<div class="max-w-[80%]"><div class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg inline-block">${escapeHtml(text)}</div><div class="text-xs text-gray-400 mt-1">${timeStamp()}</div></div>`;
+      modalChatBox.appendChild(wrapper);
+      modalChatBox.scrollTop = modalChatBox.scrollHeight;
+    }
+    function appendSystemMessage(text) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex justify-center mb-2';
+      wrapper.innerHTML = `<div class="text-xs text-gray-500 italic">${escapeHtml(text)}</div>`;
+      modalChatBox.appendChild(wrapper);
+      modalChatBox.scrollTop = modalChatBox.scrollHeight;
+    }
+    function escapeHtml(unsafe) { return unsafe.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'", '&#039;'); }
+    function timeStamp(){ const d=new Date(); return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+
+    modalSendBtn.addEventListener('click', ()=> {
+      const text = modalChatInput.value.trim(); if(!text) return;
+      appendUserMessage(text); modalChatInput.value='';
+      setTimeout(()=> {
+        const replies = ["On my way!","I'll be there in a few minutes.","Got it, looking for you now.","Traffic is clear, approaching.","Thanks — I'll pick you up at the pickup point."];
+        appendDriverMessage(replies[Math.floor(Math.random()*replies.length)]);
+      }, 1200);
+    });
+
+    // const findDriverBtn = document.getElementById('findDriverBtn');
+const rideScheduledImage = document.getElementById('rideScheduledImage');
+
+// Watch for changes in date or time
+rideDate.addEventListener('change', updateButtonText);
+rideTime.addEventListener('change', updateButtonText);
+
+function updateButtonText() {
+  if (rideDate.value && rideTime.value) {
+    findDriverBtn.textContent = 'Schedule Date';
+    findDriverBtn.onclick = showScheduledImage;
+  } else {
+    findDriverBtn.textContent = 'Find a Driver';
+    findDriverBtn.onclick = showDriverSelection;
+  }
+}
+
+function showScheduledImage(e) {
+  e.preventDefault();
+  rideScheduledImage.classList.remove('hidden');
+}
+
+    function showScheduledImage(e) {
+  e.preventDefault();
+  document.getElementById('rideScheduledModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+// Close modal and reset form
+document.getElementById('orderMoreRidesBtn').addEventListener('click', () => {
+  document.getElementById('rideScheduledModal').classList.add('hidden');
+  document.body.style.overflow = '';
+
+  // Reset form
+  rideForm.reset();
+  priceEstimation.classList.add('hidden');
+  rideScheduledImage?.classList.add('hidden');
+  findDriverBtn.textContent = 'Find a Driver';
+  findDriverBtn.onclick = showDriverSelection;
+
+  // Reset stops
+  stopsContainer.innerHTML = '';
+  stopCount = 0;
+
+  // Reset date/time to today/now
+  const today = new Date();
+  rideDate.value = today.toISOString().split('T')[0];
+  const now = new Date();
+  const minutes = Math.ceil(now.getMinutes() / 15) * 15;
+  now.setMinutes(minutes === 60 ? 0 : minutes);
+  if (minutes === 60) now.setHours(now.getHours() + 1);
+  rideTime.value = now.toTimeString().slice(0, 5);
+});
+
+    modalChatInput.addEventListener('keydown', (e)=> { if (e.key==='Enter'){ e.preventDefault(); modalSendBtn.click(); } });
+
+    // Close modal completely
+    modalCloseBtn.addEventListener('click', () => {
+      closeDriverModal();
+    });
+
+    // Go back to driver selection
+    modalBackBtn.addEventListener('click', () => {
+      closeDriverModal();
+    });
+
+    bookBtn.addEventListener('click', ()=> {
+      if(!activeDriver) return;
+      appendUserMessage('I want to book this ride now.');
+      setTimeout(()=> { 
+        appendDriverMessage('Ride confirmed! I will meet you at the pickup point.'); 
+        alert('Ride booked with ' + activeDriver.name + '.'); 
+        closeDriverModal();
+      }, 900);
+    });
+
+    // close modal if click outside (on backdrop)
+    driverModal.addEventListener('click', (e)=> {
+      if (e.target.classList.contains('modal-backdrop')) {
+        closeDriverModal();
+      }
+    });
+    
+    // Close modal with Escape key
+    window.addEventListener('keydown', (e)=> { 
+      if (e.key === 'Escape' && !driverModal.classList.contains('hidden')) {
+        closeDriverModal();
+      }
+    });
+
+    // initial render
+    renderDriverCards();
+    refreshIcons();
+  </script>
+
+
+<!-- Ride Scheduled Modal -->
+<div id="rideScheduledModal" class="modal-container hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content modal-animate cancel-modal">
+    <div class="p-6 text-center">
+      <div class="mb-4">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="check-circle" class="w-10 h-10 text-green-600"></i>
+        </div>
+        <h2 class="text-xl font-bold text-green-700">Ride Scheduled</h2>
+        <p class="text-sm text-gray-600 mt-2">Check Activities to see all schedules</p>
+      </div>
+
+     <a href="sendPackage.html">
+       <button id="orderMoreRidesBtn" class="px-4 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800">
+        Order More Rides
+      </button>
+     </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

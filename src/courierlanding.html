@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optob Services - Ride & Deliver</title>
+    <link rel="stylesheet" href="output.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background:  
+                        url('images/1775e838a75fa70a4ad9d35431c9cf76bbd445fa.jpg');
+            background-size: cover;
+            background-position: center;
+            /* min-height: 100vh; */
+            height: 700px;
+            background-repeat: no-repeat;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-gradient {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(30, 64, 175, 0.3);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 50;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar-backdrop {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 40;
+        }
+        
+        .sidebar-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .sidebar-item {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #fbbf24;
+        }
+
+        /* Mobile menu button animation */
+        .menu-btn {
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-btn.open {
+            transform: rotate(90deg);
+        }
+
+
+        .get-started {
+            background-color: rgb(248, 208, 135);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            margin-top: 30px;
+            color: white;
+            margin-left: -50px;
+            margin-right: -50px;
+            background-size: contain;
+          
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: #4a6cf7;
+            border-radius: 2px;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .step {
+            background-color: #f8faff;
+            border-radius: 10px;
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #4a6cf7;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .step-number {
+            display: inline-block;
+            background-color: #4a6cf7;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .step-description {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #4a6cf7;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #3a5bd9;
+        }
+
+
+        .con{
+            background-color: rgb(248, 208, 135);
+
+        }
+
+        .new{
+            /* background-color: #3a5bd9; */
+            justify-content: center;
+            margin-left: 100px;
+        }
+        
+
+        .faq{
+            background-color: rgb(248, 208, 135);
+            margin-top: -62px;
+        }
+
+        .footer{
+            background-color: rgb(2, 2, 63);
+            
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <!-- Sidebar Backdrop -->
+    <div class="sidebar-backdrop fixed inset-0 bg-black bg-opacity-50 md:hidden"></div>
+    
+    <!-- Sidebar Menu -->
+    <div class="sidebar fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-2xl">
+        <!-- Sidebar Header -->
+        <div class="p-6 border-b border-blue-700 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 shadow-md">
+                    <img src="images/icon-192.png" alt="">
+                    <!-- <i class="fas fa-car text-blue-600 text-xl"></i> -->
+                </div>
+                <h1 class="text-xl font-bold">Optob<span class="font-light">Ride</span></h1>
+            </div>
+            <button id="close-sidebar" class="text-white hover:text-yellow-300 md:hidden">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Sidebar Navigation -->
+        <nav class="p-4">
+            <div class="space-y-2">
+                <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg active">
+                    <i class="fas fa-home mr-3 text-yellow-300"></i>
+                    <span>Requirements</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg">
+                    <i class="fas fa-car mr-3"></i>
+                    <span>How it works</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg">
+                    <i class="fas fa-shipping-fast mr-3"></i>
+                    <span>FAQ</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg">
+                    <i class="fas fa-info-circle mr-3"></i>
+                    <span>Log in</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg">
+                    <i class="fas fa-blog mr-3"></i>
+                    <span>Sign up</span>
+                </a>
+                <!-- <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg">
+                    <i class="fas fa-question-circle mr-3"></i>
+                    <span>Help Center</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg">
+                    <i class="fas fa-phone-alt mr-3"></i>
+                    <span>Contact Us</span>
+                </a> -->
+            </div>
+            
+            <!-- Divider -->
+        
+            
+            <!-- Language Selector -->
+            <div class="mt-4 p-3 bg-blue-800 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <span>Language</span>
+                    <div class="flex items-center bg-blue-700 px-2 py-1 rounded">
+                        <i class="fas fa-globe mr-2"></i>
+                        <span>EN</span>
+                        <i class="fas fa-chevron-down ml-2 text-sm"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Sidebar Footer -->
+        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-blue-700">
+            <div class="flex justify-center space-x-4 text-blue-300">
+                <a href="#" class="hover:text-white transition-colors">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="hover:text-white transition-colors">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="hover:text-white transition-colors">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="hover:text-white transition-colors">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+            </div>
+            <p class="text-center text-blue-400 text-xs mt-2">© 2025 OptobRide. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="md:ml-64 transition-all duration-300">
+        <!-- Header -->
+        <header class=" text-white py-4  shadow-lg md:ml-[-350px]">
+            <div class="container mx-auto px-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="mr-4 text-white menu-btn md:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="w-10 h-10   flex items-center justify-center mr-3 shadow-md">
+                        <!-- <i class="fas fa-car text-blue-600 text-xl"></i> -->
+                         <a href="index.html"><img src="images/icon-192.png" alt=""></a>
+                    </div>
+                    <h1 class="text-2xl font-bold">Optob<span class="font-light">Ride</span></h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#" class="hover:text-blue-200 transition-colors">Requirements</a>
+                    <a href="#" class="font-semibold border-b-2 border-white">How it works</a>
+                    <a href="#" class="hover:text-blue-200 transition-colors">FAQ</a>
+                    <a href="#" class="hover:text-blue-200 transition-colors">Log in</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="hover:text-blue-200 transition-colors hidden md:block">
+                        <i class="fas fa-globe mr-1"></i> EN
+                    </a>
+                    <a href="#" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                        Sign up
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto md:ml-[-100px] px-4 py-8 md:py-10">
+            <div class="max-w-10xl  mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 ">
+                <!-- Left Column - Content -->
+                <div class="fade-in md:mt-50">
+                    <div class="text-white mb-8">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+                            Turn Your Wheels <br> into Steady<br>
+                            <span>
+                                <span class="text-white">Earnings — Drive <br> with</span> <span style="color: orange;">Optob Ride!</span>
+                            </span>
+                        </h1>
+                        
+                        <p class="text-1xl  mb-8">
+                            Become an Optob courier, be the Wheel that Moves Your City
+                        </p>
+                    </div>
+                   
+                </div>
+                
+                <!-- Right Column - Registration Form -->
+                <div class="fade-in" style="animation-delay: 0.2s;">
+                    <div class="form-container rounded-xl shadow-2xl p-6 md:p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Become an Optob Courier</h2>
+                        <p class="text-gray-600 mb-6">Start your journey with us today</p>
+                        
+                        <form class="space-y-6">
+                            <!-- Email -->
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <div class="relative">
+                                    <input 
+                                        type="email" 
+                                        id="email" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+                                        placeholder="Enter email address"
+                                    >
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-envelope text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Phone Number -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
+                                <div class="flex space-x-3">
+                                    <div class="relative w-1/3">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500">+</span>
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+                                            value="234"
+                                        >
+                                    </div>
+                                    <div class="w-2/3">
+                                        <input 
+                                            type="tel" 
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+                                            placeholder="Mobile number"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- City -->
+                            <div>
+                                <label for="city" class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                                <div class="relative">
+                                    <select 
+                                        id="city" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
+                                    >
+                                        <option>Lagos</option>
+                                        <option>Abuja</option>
+                                        <option>Port Harcourt</option>
+                                        <option>Ibadan</option>
+                                        <option>Kano</option>
+                                        <option>Benin City</option>
+                                        <option>Other</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-chevron-down text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Divider -->
+                            <div class="border-t border-gray-200 my-6"></div>
+                            
+                            <!-- Terms and Conditions -->
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <div class="flex items-start">
+                                    <input type="checkbox" id="terms" class="mt-1 mr-3 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <label for="terms" class="text-sm text-gray-700">
+                                        By registering, you agree to our <a href="#" class="text-blue-600 hover:underline font-medium">Terms of Service</a> and <a href="#" class="text-blue-600 hover:underline font-medium">Privacy policy</a>, commit to comply with obligations under the Nigerian legislation and provide only legal services and content on the Optob Ride Platform. Once you've become a driver, we will occasionally send you offers and promotions related to our services. You can always unsubscribe by changing your communication preferences.
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold shadow-lg">
+                                Register as a courier
+
+                            </button>
+                            
+                            <!-- Login Link -->
+                            <div class="text-center pt-4">
+                                <p class="text-gray-600">
+                                    Already have an account? 
+                                    <a href="#" class="text-blue-600 font-semibold hover:underline">Log In</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Additional Info -->
+                    <div class="mt-6 bg-white bg-opacity-80 backdrop-blur-sm rounded-xl p-4 text-center">
+                        <p class="text-gray-700">
+                            <i class="fas fa-clock text-blue-500 mr-2"></i>
+                            Application process takes less than 10 minutes
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+                <!-- <div class="contain bg-amber-700"> -->
+                <section class="get-started">
+                    <h2 class="section-title">Courier Benefit</h2>
+                    
+                    <div class="steps-container">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Weekly payouts</h3>
+                            <p class="step-description">Receive your earnings at the end of each week, with no monthly fees</p>
+                            <a href="#" class="btn">Apply to Deliver</a>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Flexible schedule/h3>
+                            <p class="step-description">Choose when and how often to earn money delivering orders.</p>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Deliver as much as you can</h3>
+                            <p class="step-description">Want to make more money? You decide.
+        Boost your earnings</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+
+
+
+        <section class="bg-white py-16">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Left: Phone Mockup -->
+                <div class="flex justify-center">
+                <img src="images/6214be9aca4c666f706ba1c7b2151dd3b38af250.jpg" alt="Optob Driver App Screenshot" 
+                    class="max-w-xs md:max-w-sm lg:max-w-md rounded-3xl shadow-lg" />
+                </div>
+                
+                <!-- Right: Text Content -->
+                <div>
+                <!-- Heading -->
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 text-center">
+                    How the <span class="text-orange-500">Optob Courier App</span> works
+                </h2>
+                <p class="mt-4 text-gray-600 text-center w-21">
+                    Our app is designed to help couriers receive, deliver and manage orders easily and effectively. 
+               </p>
+
+                <!-- Steps -->
+                <div class="mt-8 space-y-8 p-4 m-4">
+                    <!-- Step 1 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">1</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Receive orders</h3>
+                    <p class="text-gray-600 text-sm mb-2">
+                        View incoming orders, check their details, and get going.
+                    </p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">2</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Pick up the order</h3>
+                    <p class="text-gray-600 text-sm  mb-2">
+                        Collect the order from the restaurant or store.
+                    </p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">3</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Deliver</h3>
+                    <p class="text-gray-600 text-sm  mb-2">
+                        Head to the delivery address as quickly and safely as possible.
+                    </p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">4</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Track your earnings</h3>
+                    <p class="text-gray-600 text-sm  mb-2">
+                        Track your progress in real-time and view your earnings easily.
+                    </p>
+                    </div>
+                </div>
+                </div>
+
+
+                
+
+            </div>
+        </section>
+        
+
+       
+
+
+     
+
+
+
+
+
+
+
+        <section class="p-6 con">
+            <div class="max-w-6xl w-full ">
+                <!-- Header Section -->
+                <div class="text-center mb-16 ">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Optob courier requirements</h1>
+                    <!-- <p class="text-xl md:text-2xl text-gray-700 font-medium mb-8">No Waiting, No Worries</p> -->
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed ">
+                       Whether you want to deliver for a few hours occasionally or want to earn money more frequently, with Optob you can fix deliveries around your schedule.
+                    </p>
+                </div>
+
+                <!-- Feature Cards Section -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Card 1: Weekly Payouts -->
+                    <div class="bg-white rounded-xl shadow-md p-8 flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-indigo-900 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-money-bill-wave text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Valid photo ID</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Proving the minimum age requirement
+                        </p>
+                    </div>
+
+                    <!-- Card 2: Reliable Income -->
+                    <div class="bg-white rounded-xl shadow-md p-8 flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-indigo-900 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-credit-card text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Smartphone</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Android or iOS, with a Registered number
+                        </p>
+                    </div>
+
+                    <!-- Card 3: Flexible Schedule -->
+                    <div class="bg-white rounded-xl shadow-md p-8 flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-indigo-900 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Scooter, bike or car</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            With a valid licence and insurance
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="bg-white py-16">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                
+                
+                <!-- Right: Text Content -->
+                <div>
+                <!-- Heading -->
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 text-center">
+                    How the <span class="text-orange-500">Optob Courier App</span> works
+                </h2>
+                <p class="mt-4 text-gray-600 text-center w-21">
+                    Our app is designed to help couriers receive, deliver and manage orders easily and effectively. 
+               </p>
+
+                <!-- Steps -->
+                <div class="mt-8 space-y-8 p-4 m-4">
+                    <!-- Step 1 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">1</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Receive orders</h3>
+                    <p class="text-gray-600 text-sm mb-2">
+                        View incoming orders, check their details, and get going.
+                    </p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">2</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Pick up the order</h3>
+                    <p class="text-gray-600 text-sm  mb-2">
+                        Collect the order from the restaurant or store.
+                    </p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">3</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Deliver</h3>
+                    <p class="text-gray-600 text-sm  mb-2">
+                        Head to the delivery address as quickly and safely as possible.
+                    </p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="relative pl-12">
+                    <span class="absolute left-0 top-0 text-5xl font-bold text-gray-200 select-none">4</span>
+                    <h3 class="text-lg font-semibold text-gray-900">Track your earnings</h3>
+                    <p class="text-gray-600 text-sm  mb-2">
+                        Track your progress in real-time and view your earnings easily.
+                    </p>
+                    </div>
+                </div>
+                </div>
+
+
+                <!-- Left: Phone Mockup -->
+                <div class="flex justify-center">
+                <img src="images/88eab1b45149258657bef327392c3b1f48333c32.png" alt="Optob Driver App Screenshot" 
+                    class="max-w-xs md:max-w-sm lg:max-w-md rounded-3xl shadow-lg" />
+                </div>
+
+            </div>
+        </section>
+
+
+        <div class=" mx-auto px-6 py-12 max-w-6xl w-full  faq">
+        <!-- Header -->
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6">Frequently asked questions from Couriers</h1>
+                </div>
+
+                <!-- FAQ Items -->
+                <div class="space-y-8 p-10">
+                    <!-- Question 1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <button 
+                            onclick="toggleFAQ(1)"
+                            class="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition duration-200"
+                        >
+                            <span class="text-xl font-semibold text-gray-900">
+                                How do I get paid?
+                            </span>
+                            <span id="icon-1" class="text-blue-600 text-lg">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div id="answer-1" class="hidden px-8 pb-6">
+                            <div class="border-t border-gray-200 pt-6">
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                    Our payment cycle runs from Monday 00:00 to the following Sunday at 23:59. If you’re due a pay-out, we'll send it to you on a weekly basis — no need to wait until the end of the month.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="border-t border-gray-300"></div>
+
+                    <!-- Question 2 -->
+                    
+                        
+
+
+                   
+
+                    <!-- Additional Questions -->
+                    <!-- Question 3 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <button 
+                            onclick="toggleFAQ(3)"
+                            class="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition duration-200"
+                        >
+                            <span class="text-xl font-semibold text-gray-900">
+                                How can I find out my total earnings?
+                            </span>
+                            <span id="icon-3" class="text-blue-600 text-lg">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div id="answer-3" class="hidden px-8 pb-6">
+                            <div class="border-t border-gray-200 pt-6">
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                    To find your total earnings, go to the "Earnings" or "Wallet" section in your Optob Rider app. There you will see a breakdown of your trips and your total earnings for the current day, week, and previous periods.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <button 
+                            onclick="toggleFAQ(4)"
+                            class="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition duration-200"
+                        >
+                            <span class="text-xl font-semibold text-gray-900">
+                                Will I deliver on a schedule, or can I choose my hours?
+                            </span>
+                            <span id="icon-4" class="text-blue-600 text-lg">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div id="answer-4" class="hidden px-8 pb-6">
+                            <div class="border-t border-gray-200 pt-6">
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                    You can choose your own hours. Simply go online in the app when you are ready to start accepting delivery requests and go offline whenever you want to stop.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <button 
+                            onclick="toggleFAQ(5)"
+                            class="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition duration-200"
+                        >
+                            <span class="text-xl font-semibold text-gray-900">
+                                Do I need a smartphone to deliver with Optob Ride?
+                            </span>
+                            <span id="icon-5" class="text-blue-600 text-lg">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div id="answer-5" class="hidden px-8 pb-6">
+                            <div class="border-t border-gray-200 pt-6">
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                    Yes, you will need a smartphone to deliver with Optob Ride. The app is required to receive delivery requests, navigate to destinations, and manage your earnings.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <button 
+                            onclick="toggleFAQ(6)"
+                            class="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition duration-200"
+                        >
+                            <span class="text-xl font-semibold text-gray-900">
+                                 What are the requirements to sign up as a Courier
+                            </span>
+                            <span id="icon-6" class="text-blue-600 text-lg">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div id="answer-6" class="hidden px-8 pb-6">
+                            <div class="border-t border-gray-200 pt-6">
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                        To sign up as a Courier, you will generally need:
+
+                                        A Valid Driver's License: You must be legally allowed to drive in your region.
+
+                                        A Smartphone: You need an iOS or Android device to run the courier app.
+
+                                        Vehicle & Proof of Insurance: If you are using a car, you will need a registered, insured vehicle that meets your local requirements.
+
+                                        Background Check: Most platforms require you to pass a criminal and driving record background check.
+
+                                        Minimum Age: You must be at least 18 years old (or the local legal adult age).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <button 
+                            onclick="toggleFAQ(7)"
+                            class="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition duration-200"
+                        >
+                            <span class="text-xl font-semibold text-gray-900">
+                                 Are there limits to my deliveries per day?
+                            </span>
+                            <span id="icon-7" class="text-blue-600 text-lg">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div id="answer-7" class="hidden px-8 pb-6">
+                            <div class="border-t border-gray-200 pt-6">
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                     No, there are no set limits to how many deliveries you can complete per day. You are free to work as much or as little as you choose.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+        </div>
+
+
+   
+
+                    <footer class="bg-black text-white py-12 relative">
+                            <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+                                
+                                <!-- Left: Logo & Links -->
+                                <div>
+                                <!-- Logo -->
+                                <div class="flex items-center space-x-2 mb-6">
+                                    <img src="your-logo.png" alt="Optob Ride Logo" class="w-8 h-8">
+                                    <span class="text-xl font-semibold">Optob Ride</span>
+                                </div>
+
+                                <!-- Links -->
+                                <div class="grid grid-cols-2 gap-8">
+                                    <!-- Overall -->
+                                    <div>
+                                    <h3 class="font-semibold mb-3">Overall</h3>
+                                    <ul class="space-y-2 text-gray-400 text-sm">
+                                        <li><a href="#" class="hover:text-white">Homepage</a></li>
+                                        <li><a href="#" class="hover:text-white">About us</a></li>
+                                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                                        <li><a href="#" class="hover:text-white">Careers</a></li>
+                                    </ul>
+                                    </div>
+                                    <!-- Services -->
+                                    <div>
+                                    <h3 class="font-semibold mb-3">Services</h3>
+                                    <ul class="space-y-2 text-gray-400 text-sm">
+                                        <li><a href="#" class="hover:text-white">Ride</a></li>
+                                        <li><a href="#" class="hover:text-white">Drive</a></li>
+                                        <li><a href="#" class="hover:text-white">Delivery</a></li>
+                                        <li><a href="#" class="hover:text-white">Pick Ups</a></li>
+                                    </ul>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <!-- Middle: Empty Spacer (for balance on desktop) -->
+                                <div></div>
+
+                                <!-- Right: App Store Buttons -->
+                                <div class="flex flex-col space-y-4 items-start md:items-end">
+                                <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-full w-48 hover:scale-105 transition">
+                                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12.005 2.002c1.486 0 2.924.583 3.978 1.637a5.624 5.624 0 0 1 1.637 3.978c0 1.486-.583 2.924-1.637 3.978a5.624 5.624 0 0 1-3.978 1.637c-1.486 0-2.924-.583-3.978-1.637a5.624 5.624 0 0 1-1.637-3.978c0-1.486.583-2.924 1.637-3.978a5.624 5.624 0 0 1 3.978-1.637z"/>
+                                    </svg>
+                                    <div class="text-left">
+                                    <p class="text-xs">Download on the</p>
+                                    <p class="font-semibold">App Store</p>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-full w-48 hover:scale-105 transition">
+                                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 512 512">
+                                    <path d="M325.3 234.3 104.7 56.5c-4.5-3.6-8.8-3.5-12.2-.9-3.3 2.6-5.1 6.8-5.1 11.7v378.8c0 4.9 1.8 9.1 5.1 11.7 3.3 2.6 7.7 2.7 12.2-.9l220.6-177.8c6.8-5.5 6.8-14.5 0-20z"/>
+                                    </svg>
+                                    <div class="text-left">
+                                    <p class="text-xs">GET IT ON</p>
+                                    <p class="font-semibold">Google Play</p>
+                                    </div>
+                                </a>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Row -->
+                            <div class="max-w-7xl mx-auto px-6 mt-12 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm space-y-4 md:space-y-0">
+                                
+                                <!-- Social Icons -->
+                                <div class="flex space-x-4">
+                                <a href="#" class="hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="hover:text-white"><i class="fab fa-x-twitter"></i></a>
+                                <a href="#" class="hover:text-white"><i class="fab fa-youtube"></i></a>
+                                <a href="#" class="hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a>
+                                </div>
+
+                                <!-- Copyright -->
+                                <p class="text-center">© 2025 Optob Ride. All Rights Reserved</p>
+
+                                <!-- Policy Links -->
+                                <div class="flex space-x-6">
+                                <a href="#" class="hover:text-white">Privacy</a>
+                                <a href="#" class="hover:text-white">Accessibility</a>
+                                <a href="#" class="hover:text-white">Terms</a>
+                                </div>
+                            </div>
+
+                            <!-- Back to Top Button -->
+                            <a href="#" class="fixed bottom-6 right-6 bg-white text-black rounded-full p-3 shadow-md hover:scale-110 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                </svg>
+                            </a>
+                </footer>
+
+                
+
+
+                 
+  
+
+  
+
+    
+    </main>
+
+    
+
+    
+
+
+    
+
+    <script>
+        // Sidebar functionality
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeSidebar = document.getElementById('close-sidebar');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarBackdrop = document.querySelector('.sidebar-backdrop');
+        const mainContent = document.querySelector('.md\\:ml-64');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            sidebarBackdrop.classList.add('active');
+            menuToggle.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebarFunc() {
+            sidebar.classList.remove('open');
+            sidebarBackdrop.classList.remove('active');
+            menuToggle.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        menuToggle.addEventListener('click', openSidebar);
+        closeSidebar.addEventListener('click', closeSidebarFunc);
+        sidebarBackdrop.addEventListener('click', closeSidebarFunc);
+
+        // Close sidebar when clicking on a link (for mobile)
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', closeSidebarFunc);
+        });
+
+        // Simple form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const phone = document.querySelector('input[type="tel"]').value;
+            const city = document.getElementById('city').value;
+            const terms = document.getElementById('terms').checked;
+            
+            if (!email || !phone || !city) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            if (!terms) {
+                alert('Please agree to the terms and conditions.');
+                return;
+            }
+            
+            // In a real application, you would submit the form here
+            alert('Application submitted successfully! We will contact you soon.');
+            
+            // Reset form
+            document.querySelector('form').reset();
+        });
+        
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, select');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('ring-2', 'ring-blue-300', 'rounded-lg');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('ring-2', 'ring-blue-300', 'rounded-lg');
+                });
+            });
+
+            // Add hover effects to sidebar items
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                // On desktop, ensure sidebar is closed if it was open on mobile
+                closeSidebarFunc();
+            }
+        });
+
+         function toggleFAQ(id) {
+            const answer = document.getElementById(`answer-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+                icon.innerHTML = '<i class="fas fa-minus"></i>';
+            } else {
+                answer.classList.add('hidden');
+                icon.innerHTML = '<i class="fas fa-plus"></i>';
+            }
+        }
+    </script>
+</body>
+</html>
