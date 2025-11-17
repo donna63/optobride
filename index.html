@@ -1,1091 +1,616 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optob Services - Ride & Deliver</title>
-    <link rel="stylesheet" href="output.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Animation styles */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        /* Animation classes */
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        .animate-fadeInUp {
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
-        
-        .animate-pulse-slow {
-            animation: pulse 2s infinite;
-        }
-        
-        .animate-slideInRight {
-            animation: slideInRight 0.8s ease-out forwards;
-        }
-        
-        .animate-slideInLeft {
-            animation: slideInLeft 0.8s ease-out forwards;
-        }
-        
-        .animate-bounceIn {
-            animation: bounceIn 0.8s ease-out forwards;
-        }
-        
-        /* Staggered animation delays */
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
-        .delay-500 { animation-delay: 0.5s; }
-        
-        /* Mobile sidebar styles */
-        .mobile-sidebar {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100vh;
-            background: #1e293b;
-            z-index: 1000;
-            transition: right 0.3s ease;
-            overflow-y: auto;
-            padding: 20px;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .mobile-sidebar.active {
-            right: 0;
-        }
-        
-        .mobile-sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease;
-        }
-        
-        .mobile-sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        .mobile-sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #334155;
-        }
-        
-        .mobile-sidebar-logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .mobile-sidebar-logo img {
-            width: 40px;
-            margin-right: 10px;
-        }
-        
-        .mobile-sidebar-logo h1 {
-            font-size: 1.5rem;
-            color: white;
-        }
-        
-        .mobile-sidebar-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        .mobile-sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .mobile-sidebar-nav a {
-            color: #cbd5e1;
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .mobile-sidebar-nav a:hover {
-            background: #334155;
-            color: white;
-        }
-        
-        /* Popup styles */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease;
-        }
-        
-        .popup-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .popup-container {
-            background: rgb(18, 9, 66);
-            border-radius: 15px;
-            width: 90%;
-            color: white;
-            max-width: 500px;
-            padding: 30px;
-            position: relative;
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        .popup-overlay.active .popup-container {
-            transform: scale(1);
-        }
-        
-        .popup-close {
-            position: absolute;
-            top: 15px;
-            color: white;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #64748b;
-        }
-        
-        .popup-header {
-            text-align: center;
-            margin-bottom: 25px;
-            color: white;
-        }
-        
-        .popup-header h2 {
-            font-size: 1.8rem;
-            color: #edf4ff;
-            margin-bottom: 10px;
-        }
-        
-        .popup-header p {
-            color: #dee6f1;
-        }
-        
-        .popup-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 25px;
-            
-        }
-        
-        .popup-option {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            
-        }
-        
-        .popup-option:hover {
-            border-color: #3b82f6;
-            background: #123252;
-        }
-        
-        .popup-option-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.5rem;
-        }
-        
-        .popup-option-icon.user {
-            background: #10b981;
-        }
-        
-        .popup-option-icon.driver {
-            background: #f59e0b;
-        }
-        
-        .popup-option-icon.courier {
-            background: #ef4444;
-        }
-        
-        .popup-option-content h3 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            color: #e4eeff;
-        }
-        
-        .popup-option-content p {
-            font-size: 0.9rem;
-            color: #e9eff7;
-        }
-        
-        .popup-footer {
-            text-align: center;
-            color: #e4efff;
-            font-size: 0.9rem;
-        }
-        
-        .popup-footer a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .desktop-nav {
-                display: none;
-            }
-            
-            .header-actions {
-                display: none;
-            }
-        }
-        
-        /* Animation triggers */
-        .scroll-animate {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        
-        .scroll-animate.animated {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optob Services – Ride & Deliver</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.258.0/dist/lucide.min.js"></script>
+
+  <!-- Font-Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- PWA manifest (keep your own) -->
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* ----  key-frame animations (identical to your originals)  ---- */
+    @keyframes float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes fadeInUp{ from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pulse   { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    @keyframes bounceIn{ 0%{opacity:0;transform:scale(.3)} 50%{opacity:1;transform:scale(1.05)} 70%{transform:scale(.9)} 100%{opacity:1;transform:scale(1)} }
+
+    .animate-float     { animation:float 3s ease-in-out infinite }
+    .animate-fadeInUp  { animation:fadeInUp .8s ease-out forwards }
+    .animate-pulse-slow{ animation:pulse 2s infinite }
+    .animate-bounceIn  { animation:bounceIn .8s ease-out forwards }
+
+    .delay-100{animation-delay:.1s}
+    .delay-200{animation-delay:.2s}
+    .delay-300{animation-delay:.3s}
+    .delay-400{animation-delay:.4s}
+    .delay-500{animation-delay:.5s}
+
+    /* ----  scroll-trigger  ---- */
+    .scroll-animate{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+    .scroll-animate.animated{opacity:1;transform:translateY(0)}
+
+    /* ----  mobile drawer (right-side)  ---- */
+    .mobile-sidebar{
+      position:fixed;
+      top:0;
+      right:-300px;
+      width:300px;
+      height:100vh;
+      background:#1e293b;
+      z-index:1000;
+      transition:right .3s ease;
+      overflow-y:auto;
+      padding:20px;
+      box-shadow:-5px 0 15px rgba(0,0,0,.1);
+    }
+    .mobile-sidebar.active{right:0}
+    .mobile-sidebar-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.5);
+      z-index:999;
+      opacity:0;
+      visibility:hidden;
+      transition:opacity .3s ease;
+    }
+    .mobile-sidebar-overlay.active{opacity:1;visibility:visible}
+    .mobile-menu-btn{display:block md:hidden}
+  </style>
 </head>
 
 <body class="font-sans bg-gray-50">
-    <!-- Mobile Sidebar -->
-    <div class="mobile-sidebar-overlay"></div>
-    <div class="mobile-sidebar">
-        <div class="mobile-sidebar-header">
-            <div class="mobile-sidebar-logo">
-                <img class="w-10" src="/src/images/image-removebg-preview (26).png" alt="">
-                <h1>Optob</h1>
-            </div>
-            <button class="mobile-sidebar-close">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <nav class="mobile-sidebar-nav">
-            <a href="#" class="animate-slideInRight delay-100">Driver</a>
-            <a href="#" class="animate-slideInRight delay-200">Courier</a>
-            <a href="#" class="animate-slideInRight delay-300">About us</a>
-            <a href="#" class="animate-slideInRight delay-400">Blog</a>
-            <a href="#" class="animate-slideInRight delay-500">Help</a>
-            <a href="#" class="animate-slideInRight delay-500">Logout</a>
-            <a href="#" class="signup-btn-mobile bg-primary text-white rounded-lg py-2 px-4 text-center animate-slideInRight delay-500">Sign Up</a>
-        </nav>
+
+<!-- =========  MOBILE DRAWER (right-side)  ========= -->
+<div class="mobile-sidebar-overlay"></div>
+<aside class="mobile-sidebar">
+  <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-600">
+    <div class="flex items-center gap-3">
+      <img src="images/image-removebg-preview (26).png" class="w-10" alt="logo">
+      <h1 class="text-white font-bold text-xl">Optob</h1>
+    </div>
+    <button class="text-white text-2xl" id="closeMobile"><i class="fas fa-times"></i></button>
+  </div>
+
+  <nav class="flex flex-col gap-4">
+    <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-100">Driver</a>
+    <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-200">Courier</a>
+    <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-300">About us</a>
+    <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-400">Blog</a>
+    <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-500">Help</a>
+    <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-500">Logout</a>
+    <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded text-center mt-4 animate-slideInRight delay-500">Sign Up</a>
+  </nav>
+</aside>
+
+<!-- =========  SIGN-UP POP-UP  ========= -->
+<div class="fixed inset-0 bg-black/60 z-50 items-center justify-center hidden" id="signupPopup">
+  <div class="bg-[#120942] text-white rounded-2xl p-6 w-[90%] max-w-md relative animate-bounceIn">
+    <button class="absolute top-4 right-4 text-xl" id="closePopup"><i class="fas fa-times"></i></button>
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold mb-2">Join Optob Today</h2>
+      <p class="text-slate-300">Choose how you'd like to use our platform</p>
     </div>
 
-    <!-- Sign Up Popup -->
-    <div class="popup-overlay " >
-        <div class="popup-container animate-bounceIn ">
-            <button class="popup-close">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="popup-header">
-                <h2>Join Optob Today</h2>
-                <p>Choose how you'd like to use our platform</p>
-            </div>
-            <div class="popup-options">
-                <div class="popup-option" data-role="user">
-                    <div class="popup-option-icon user">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <a href="/src/userlogin.html">
-                        <div class="popup-option-content">
-                        <h3>As a User</h3>
-                        <p>Order ride, send packages etc</p>
-                    </div>
-                    </a>
-                </div>
-                <div class="popup-option" data-role="driver">
-                    <div class="popup-option-icon driver">
-                        <i class="fas fa-car"></i>
-                    </div>
-                   <a href="/src/driverlanding.html">
-                     <div class="popup-option-content">
-                        <h3>As a Driver</h3>
-                        <p>Make money by taking ride orders</p>
-                    </div>
-                   </a>
-                </div>
-                <div class="popup-option" data-role="courier">
-                    <div class="popup-option-icon courier">
-                        <i class="fas fa-box"></i>
-                    </div>
-                   <a href="courierlanding.html">
-                     <div class="popup-option-content">
-                        <h3>As a Courier</h3>
-                        <p>Deliver packages and get paid</p>
-                    </div>
-                   </a>
-                </div>
-            </div>
-            <div class="popup-footer">
-                Already have an account? <a href="#">Log in</a>
-            </div>
+    <div class="space-y-4">
+      <a href="userlogin.html" class="flex items-center gap-4 p-4 rounded-xl border-2 border-slate-600 hover:border-indigo-400 hover:bg-slate-800 transition">
+        <div class="w-12 h-12 rounded-full bg-green-500 grid place-items-center text-xl"><i class="fas fa-user"></i></div>
+        <div>
+          <h3 class="font-semibold">As a User</h3>
+          <p class="text-sm text-slate-300">Order ride, send packages etc</p>
         </div>
+      </a>
+
+      <a href="driverlanding.html" class="flex items-center gap-4 p-4 rounded-xl border-2 border-slate-600 hover:border-indigo-400 hover:bg-slate-800 transition">
+        <div class="w-12 h-12 rounded-full bg-amber-500 grid place-items-center text-xl"><i class="fas fa-car"></i></div>
+        <div>
+          <h3 class="font-semibold">As a Driver</h3>
+          <p class="text-sm text-slate-300">Make money by taking ride orders</p>
+        </div>
+      </a>
+
+      <a href="courierlanding.html" class="flex items-center gap-4 p-4 rounded-xl border-2 border-slate-600 hover:border-indigo-400 hover:bg-slate-800 transition">
+        <div class="w-12 h-12 rounded-full bg-red-500 grid place-items-center text-xl"><i class="fas fa-box"></i></div>
+        <div>
+          <h3 class="font-semibold">As a Courier</h3>
+          <p class="text-sm text-slate-300">Deliver packages and get paid</p>
+        </div>
+      </a>
     </div>
 
-    <!-- Header Section -->
-    <header class="bg-blue-950 shadow-md text-white">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <img class="w-10 animate-pulse-slow" src="/src/images/image-removebg-preview (26).png" alt="">
-                <h1 class="text-2xl font-bold text-primary ml-1">Optob</h1>
-                <span class="ml-1 text-white">Ride</span>
-            </div>
-            <nav class="desktop-nav hidden md:flex space-x-8 text-white">
-                <a href="#" class="text-white hover:text-primary transition-colors duration-300">Driver</a>
-                <a href="#" class="text-white hover:text-primary transition-colors duration-300">Courier</a>
-                <a href="#" class="text-white hover:text-primary transition-colors duration-300">About us</a>
-                <a href="#" class="text-white hover:text-primary transition-colors duration-300">Blog</a>
-            </nav>
-            <div class="flex items-center space-x-4 header-actions">
-                <a href="#" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors duration-300">
-                    <i class="fas fa-globe text-white"><span class="ml-2 text-sm">EN</span></i>
-                </a>
+    <p class="text-center text-slate-400 text-sm mt-6">Already have an account? <a href="#" class="text-indigo-400">Log in</a></p>
+  </div>
+</div>
 
-                 <a href="#" class="px-4 py-2 text-white hover:text-primary transition-colors duration-300">
-                    <span>Help</span>
-                 </a>
+<!-- =========  HEADER  ========= -->
+<header class="bg-blue-950 text-white">
+  <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <img src="images/image-removebg-preview (26).png" class="w-10 animate-pulse-slow" alt="logo">
+      <h1 class="text-2xl font-bold">Optob <span class="text-white">Ride</span></h1>
+    </div>
 
-                <a href="#" class="px-4 py-2 text-white hover:text-primary transition-colors duration-300">
-                    <span>Logout</span>
-                </a>
+    <!-- desktop nav -->
+    <nav class="hidden md:flex gap-6 text-white">
+      <a href="#" class="hover:text-indigo-300 transition">Driver</a>
+      <a href="#" class="hover:text-indigo-300 transition">Courier</a>
+      <a href="#" class="hover:text-indigo-300 transition">About us</a>
+      <a href="#" class="hover:text-indigo-300 transition">Blog</a>
+    </nav>
 
-                <a href="#" class="signup-btn px-4 py-2 bg-primary text-blue-950 rounded-lg bg-white hover:bg-gray-100 transition-colors duration-300">
-                    <span class="text-blue-950">Sign Up</span>
-                </a>
-            </div>
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
+    <div class="flex items-center gap-4">
+      <a href="#" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-white text-blue-950 hover:bg-gray-200 transition" id="signupHeader">
+        <i class="fas fa-user-plus"></i> Sign Up
+      </a>
+      <button class="md:hidden text-2xl" id="openMobile"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- =========  HERO SECTION  ========= -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:flex items-center gap-10 scroll-animate">
+
+      <div class="flex-1">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fadeInUp">
+          Ready to <span class="text-amber-400 underline">ride</span> or <br><span class="text-amber-400 underline">deliver?</span>
+        </h2>
+        <p class="text-xl mb-6 animate-fadeInUp delay-100">Let's get moving</p>
+
+        <div class="flex items-center gap-2 mb-4 animate-fadeInUp delay-200">
+          <i data-lucide="map-pin" class="w-5 h-5 text-indigo-600"></i>
+          <span class="font-medium">Abuja, NG</span>
+          <button class="ml-3 text-sm text-indigo-600">Change my location</button>
         </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="text-black py-16">
-        <div class="container mx-auto px-4">
-            <div class="mt-[-30px] mx-auto bg-white rounded-lg shadow-lg p-6 text-gray-800 md:flex gap-[200px] scroll-animate">
-                <div class="bg-white rounded-lg p-6 text-gray-800">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fadeInUp">Ready to <i style="text-decoration: underline;" class="text-yellow-400"> ride </i>or <br><i style="text-decoration: underline;" class="text-yellow-400 mr-25"> deliver? </i></h2>
-                    <p class="text-xl mb-8 animate-fadeInUp delay-100">Let's get moving</p>
-
-                    <div class="flex items-center mb-4 animate-fadeInUp delay-200">
-                        <i class="fas fa-location-dot text-primary mr-2"></i>
-                        <span class="font-medium">Abuja, NG</span>
-                        <button class="ml-4 text-sm text-primary">Change my location</button>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 animate-fadeInUp delay-300">
-                        <div class="border rounded-lg p-3">
-                            <label class="text-xs text-gray-500">Pickup location</label>
-                            <input type="text" class="w-full outline-none" placeholder="Enter pickup location">
-                        </div>
-                        <div class="border rounded-lg p-3">
-                            <label class="text-xs text-gray-500">Dropoff location</label>
-                            <input type="text" class="w-full outline-none" placeholder="Enter dropoff location">
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 animate-fadeInUp delay-400">
-                        <div class="border rounded-lg p-3">
-                            <label class="text-xs text-gray-500">Date</label>
-                            <div class="font-medium">Today</div>
-                        </div>
-                        <div class="border rounded-lg p-3">
-                            <label class="text-xs text-gray-500">Time</label>
-                            <div class="font-medium">Now</div>
-                        </div>
-                    </div>
-                    
-                    <div class="border-t pt-4 animate-fadeInUp delay-500">
-                        <h3 class="font-bold mb-2">See Prices</h3>
-                        <p class="text-sm text-gray-600">Log in to see your recent activity</p>
-                    </div>
-                </div>
-
-                <div class="animate-float">
-                    <img class="md:ml-[50px]" src="/src/images/image-removebg-preview (7).png" alt="cart">
-                </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 animate-fadeInUp delay-300">
+          <div class="border rounded-lg p-3">
+            <label class="text-xs text-gray-500">Pickup location</label>
+            <input type="text" class="w-full outline-none" placeholder="Enter pickup location">
+          </div>
+          <div class="border rounded-lg p-3">
+            <label class="text-xs text-gray-500">Dropoff location</label>
+            <input type="text" class="w-full outline-none" placeholder="Enter dropoff location">
+          </div>
         </div>
-    </section>
 
-    <!-- Services Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 scroll-animate">Optob Services</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Ride Service -->
-                <div class="bg-gray-50 p-6 rounded-lg shadow-2xl flex scroll-animate">
-                    <div>
-                        <h3 class="text-xl font-bold mb-4">Ride</h3>
-                        <p class="text-gray-600 mb-4">Go anywhere with Optob Ride. Request a ride, hop in, and go.</p>
-                    </div>
-                    <div>
-                        <img src="/src/images/image-removebg-preview (8).png" alt="">
-                    </div>
-                </div>
-
-                <div class="mt-6 bg-gray-50 p-6 rounded-lg shadow-2xl flex scroll-animate">
-                    <div>
-                        <h4 class="font-bold mb-2">Reserve</h4>
-                        <p class="text-gray-600 text-sm">Reserve your ride in advance so you can relax on the day of your trip.</p>
-                    </div>
-                    <div>
-                        <img src="/src/images/image-removebg-preview (9).png" alt="">
-                    </div>
-                </div>
-                
-                <!-- Courier Service -->
-                <div class="bg-gray-50 p-6 rounded-lg shadow-2xl flex scroll-animate">
-                   <div>
-                     <h3 class="text-xl font-bold mb-4">Courier</h3>
-                    <p class="text-gray-600 mb-4">Deliveries seamlessly Done with Speed & Safety</p>
-                   </div>
-                   <div>
-                    <img src="/src/images/image-removebg-preview (10).png" alt="">
-                   </div>
-                </div>
-            </div>
+        <div class="grid grid-cols-2 gap-4 mb-6 animate-fadeInUp delay-400">
+          <div class="border rounded-lg p-3">
+            <label class="text-xs text-gray-500">Date</label>
+            <div class="font-medium">Today</div>
+          </div>
+          <div class="border rounded-lg p-3">
+            <label class="text-xs text-gray-500">Time</label>
+            <div class="font-medium">Now</div>
+          </div>
         </div>
-    </section>
 
-    <section>
-        <!-- Schedule Ride -->
-        <div class="bg-gray-50 p-6 rounded-lg shadow-md md:flex gap-20 justify-center scroll-animate">
-            <div class="mt-6 bg-gray-50 p-6 rounded-lg shadow-md">
-                <h4 class="font-bold mb-2">Benefits</h4>
-                <ul class="text-gray-600 text-sm list-disc pl-5">
-                    <li>Choose your exact pickup time up to 90 days in advance.</li>
-                    <li>Extra wait time included to meet your ride.</li>
-                    <li>Cancel at no charge up to 60 minutes in advance.</li>
-                </ul>
-                <a href="#" class="text-primary text-sm mt-2 inline-block">See Terms</a>
-            </div>
-
-            <div class="mt-6 bg-blue-950 p-6 rounded-lg shadow-md text-white flex">
-                <div>
-                    <h3 class="text-3xl font-bold mb-4 md:mt-10">Schedule your ride <br> right with <i class="text-orange-600">Optob Ride</i></h3>
-                    <h4 class="font-bold mb-2">Choose date and time</h4>
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="border rounded-lg p-3">
-                            <label class="text-xs text-gray-500">Date</label>
-                            <input type="date" class="w-full outline-none">
-                        </div>
-                        <div class="border rounded-lg p-3">
-                            <label class="text-xs text-gray-500">Time</label>
-                            <input type="time" class="w-full outline-none">
-                        </div>
-                    </div>
-                    <button class="w-full bg-primary text-white py-3 border rounded-lg hover:bg-secondary transition-colors duration-300">
-                        Next
-                    </button>
-                </div>
-                <div>
-                    <img class="md:w-100 animate-pulse-slow" src="/src/images/image-removebg-preview (11).png" alt="">
-                </div>
-            </div>
+        <div class="border-t pt-4 animate-fadeInUp delay-500">
+          <h3 class="font-bold mb-2">See Prices</h3>
+          <p class="text-sm text-gray-600">Log in to see your recent activity</p>
         </div>
-    </section>
+      </div>
 
-    <!-- Secure Deliveries Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4 flex scroll-animate">
-            <div class="animate-slideInLeft">
-                <img src="/src/images/image-removebg-preview (12).png" alt="">
-            </div>
-            <div class="max-w-3xl mx-auto text-center animate-slideInRight">
-                <h2 class="text-3xl font-bold mb-6 text-start md:mt-30">Secure & Insured <br> Deliveries</h2>
-                <p class="text-xl text-gray-700 mb-8 text-start">Your delivery, your rules. Track your packages in real-time</p>
-                
-                <div class="flex flex-col md:flex-row justify-center justify-start space-y-4 md:space-y-0 md:space-x-4">
-                    <button class="bg-blue-950 text-white border text-start border-primary px-6 py-3 rounded-lg hover:bg-blue-300 transition-colors duration-300">
-                        Create your account
-                    </button>
-                    <button class="bg-primary text-black px-6 py-3 text-start rounded-lg hover:bg-secondary transition-colors duration-300">
-                        Log into your account
-                    </button>
-                </div>
-            </div>
+      <div class="animate-float">
+        <img src="images/image-removebg-preview (7).png" class="w-64 mx-auto" alt="cart">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========  SERVICES  ========= -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12 scroll-animate">Optob Services</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-gray-50 p-6 rounded-xl shadow-md flex items-center gap-4 scroll-animate">
+        <div>
+          <h3 class="text-xl font-bold mb-2">Ride</h3>
+          <p class="text-gray-600">Go anywhere with Optob Ride. Request a ride, hop in, and go.</p>
         </div>
-    </section>
+        <img src="images/image-removebg-preview (8).png" class="w-24" alt="">
+      </div>
 
-    <!-- Driver Section -->
-    <section class="py-16 px-4 md:flex bg-amber-100 scroll-animate">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-start">
-                <h2 class="text-3xl font-bold mb-4">Drive when you want, make what you need</h2>
-                <p class="text-xl text-gray-700 mb-8">Make money on your schedule with deliveries or rides—or both. You can use your own car or choose a rental from Optob Ride.</p>
-                
-                <div class="flex gap-5">
-                    <button class="bg-black text-white py-2 px-2 rounded-lg hover:bg-secondary text-start mb-4 transition-colors duration-300">
-                        Get Started
-                    </button>
-                    <p class="text-gray-600">Already have an account? <a href="#" class="text-primary">Sign in</a></p>
-                </div>
-            </div>
+      <div class="bg-gray-50 p-6 rounded-xl shadow-md scroll-animate">
+        <h4 class="font-bold mb-2">Reserve</h4>
+        <p class="text-gray-600 text-sm">Reserve your ride in advance so you can relax on the day of your trip.</p>
+        <img src="images/image-removebg-preview (9).png" class="w-24 mx-auto mt-4" alt="">
+      </div>
+
+      <div class="bg-gray-50 p-6 rounded-xl shadow-md flex items-center gap-4 scroll-animate">
+        <div>
+          <h3 class="text-xl font-bold mb-2">Courier</h3>
+          <p class="text-gray-600">Deliveries seamlessly Done with Speed & Safety</p>
         </div>
-        <div class="animate-float">
-            <img src="/src/images/image-removebg-preview (15).png" alt="">
+        <img src="images/image-removebg-preview (10).png" class="w-24" alt="">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========  SCHEDULE RIDE  ========= -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center scroll-animate">
+
+      <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+        <h4 class="font-bold mb-2">Benefits</h4>
+        <ul class="list-disc pl-5 text-gray-600 space-y-1 text-sm">
+          <li>Choose your exact pickup time up to 90 days in advance.</li>
+          <li>Extra wait time included to meet your ride.</li>
+          <li>Cancel at no charge up to 60 minutes in advance.</li>
+        </ul>
+        <a href="#" class="text-indigo-600 text-sm mt-2 inline-block">See Terms</a>
+      </div>
+
+      <div class="bg-blue-950 text-white p-6 rounded-xl shadow-md">
+        <h3 class="text-2xl font-bold mb-4">Schedule your ride right with <span class="text-amber-400">Optob Ride</span></h3>
+
+        <h4 class="font-bold mb-3">Choose date and time</h4>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-white/10 border border-white/20 rounded-lg p-3">
+            <label class="text-xs text-white/70">Date</label>
+            <input type="date" class="w-full bg-transparent outline-none text-white">
+          </div>
+          <div class="bg-white/10 border border-white/20 rounded-lg p-3">
+            <label class="text-xs text-white/70">Time</label>
+            <input type="time" class="w-full bg-transparent outline-none text-white">
+          </div>
         </div>
-    </section>
 
-    <!-- App Download Section -->
-    <section class="py-16 bg-gray-100">
-        <div class="container mx-auto px-4">
-            <div class="max-w-5xl mx-auto text-start text-white">
-                <div class="md:flex gap-15 scroll-animate">
-                    <div class="bg-blue-950 p-10 rounded-2xl">
-                        <h2 class="text-3xl font-bold mb-4">Get started with Optob app</h2>
-                        <p class="text-xl text-white mb-8">Download our app on any device and get easy to flexible plane and features.</p>
-                        
-                        <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6 mb-12">
-                            <button class="bg-white text-black px-6 py-3 rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors duration-300">
-                                <i class="fab fa-apple text-2xl mr-2 text-black"></i>
-                                <div class="text-left">
-                                    <div class="text-xs">Download on the</div>
-                                    <div class="font-bold">App Store</div>
-                                </div>
-                            </button>
-                            <button class="bg-white text-black px-6 py-3 rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors duration-300">
-                                <i class="fab fa-google-play text-xl mr-2"></i>
-                                <div class="text-left">
-                                    <div class="text-xs">GET IT ON</div>
-                                    <div class="font-bold">Google Play</div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
+        <button class="w-full bg-indigo-500 text-white py-3 rounded-lg hover:bg-indigo-600 transition">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
-                    <div class="mt-10 ml-20 animate-float">
-                        <img src="/src/images/image-removebg-preview (13).png" alt="">
-                    </div>
-                </div>
-                
-                <section class="py-10 px-4 text-black">
-                    <div class="max-w-5xl mx-auto">
-                        <div class="text-center mb-12 scroll-animate">
-                            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
-                            <p class="text-lg text-gray-600">Questions you might have, answered all in one place.</p>
-                        </div>
-            
-                        <div class="gap-5 md:flex">
-                            <div>
-                                <!-- FAQ Item 1 -->
-                                <div class="bg-white rounded-lg shadow-md mb-4 md:w-130 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>What is Optob Ride?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">Optob Ride is a fast growing logistics and transportation company whose main aim and mission is channelled to helping you, your family and your loved ones get top-notch services while taking a ride or sending packages.</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- FAQ Item 2 -->
-                                <div class="bg-white rounded-lg shadow-md mb-4 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>Is Optob Ride licensed?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">Yes, Optob Ride is fully licensed and complies with all local transportation regulations. We maintain proper insurance coverage for all our services.</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- FAQ Item 3 -->
-                                <div class="bg-white rounded-lg shadow-md mb-4 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>How do I register on Optob Ride?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">Registration is simple! Download our app, enter your phone number, verify with the code sent to you, and complete your profile with basic information.</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- FAQ Item 4 -->
-                                <div class="bg-white rounded-lg shadow-md mb-4 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>How do I fund my Optob wallet?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">You can fund your wallet using various payment methods including credit/debit cards, bank transfers, or mobile money options available in your region.</p>
-                                    </div>
-                                </div>
+<!-- =========  SECURE DELIVERIES  ========= -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center scroll-animate">
+    <div class="animate-slideInLeft">
+      <img src="images/image-removebg-preview (12).png" class="w-full" alt="">
+    </div>
+    <div class="animate-slideInRight">
+      <h2 class="text-3xl font-bold mb-4">Secure & Insured <br> Deliveries</h2>
+      <p class="text-xl text-gray-700 mb-8">Your delivery, your rules. Track your packages in real-time</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="#" class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition">Create your account</a>
+        <a href="#" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition">Log into your account</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-                                <div class="bg-white rounded-lg shadow-md mb-4 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>What are the Terms and Conditions?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">Our Terms and Conditions outline the rights and responsibilities of both users and Optob Ride. You can view the complete document in the app or on our website.</p>
-                                    </div>
-                                </div>
-                            </div>
-                
-                            <div>
-                                <!-- FAQ Item 5 -->
-                                <div class="bg-white rounded-lg shadow-md mb-4 md:w-130 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>Can I work as a Driver or Delivery man?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">Absolutely! We're always looking for qualified drivers and delivery personnel. Visit our careers page or contact our driver support team for requirements and application process.</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- FAQ Item 6 -->
-                                <div class="bg-white rounded-lg shadow-md mb-4 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>How do pay-outs work?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">Payouts for drivers are processed weekly. You can track your earnings in the app and request withdrawals to your linked bank account or mobile wallet.</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- FAQ Item 7 -->
-                                <div class="bg-white rounded-lg shadow-md mb-4 overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>How safe are my packages?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">We take package security seriously. All deliveries are tracked in real-time, and we offer insurance options for valuable items. Our delivery personnel are vetted and trained.</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- FAQ Item 8 -->
-                                <div class="bg-white rounded-lg mb-4 shadow-md overflow-hidden scroll-animate">
-                                    <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
-                                        <span>Can businesses use Optob Ride?</span>
-                                        <i class="fas fa-plus text-primary"></i>
-                                    </button>
-                                    <div class="faq-answer hidden px-6 pb-6">
-                                        <p class="text-gray-700">Yes! We offer special business accounts with features like multiple users, billing management, and delivery analytics. Contact our business team for customized solutions.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+<!-- =========  DRIVER SECTION  ========= -->
+<section class="py-16 bg-amber-50">
+  <div class="container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center scroll-animate">
+    <div>
+      <h2 class="text-3xl font-bold mb-4">Drive when you want, make what you need</h2>
+      <p class="text-xl text-gray-700 mb-8">Make money on your schedule with deliveries or rides—or both. You can use your own car or choose a rental from Optob Ride.</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="#" class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition">Get Started</a>
+        <p class="text-gray-600 self-center">Already have an account? <a href="#" class="text-indigo-600">Sign in</a></p>
+      </div>
+    </div>
+    <div class="animate-float">
+      <img src="images/image-removebg-preview (15).png" class="w-full" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- =========  APP DOWNLOAD  ========= -->
+<section class="py-16 bg-gray-100">
+  <div class="container mx-auto px-4">
+    <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center scroll-animate">
+      <div class="bg-blue-950 text-white p-8 rounded-2xl">
+        <h2 class="text-3xl font-bold mb-4">Get started with Optob app</h2>
+        <p class="text-xl mb-8">Download our app on any device and get easy to flexible plane and features.</p>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+          <a href="#" class="bg-white text-black px-4 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-200 transition">
+            <i class="fab fa-apple text-2xl"></i>
+            <div>
+              <div class="text-xs">Download on the</div>
+              <div class="font-bold">App Store</div>
             </div>
+          </a>
+          <a href="#" class="bg-white text-black px-4 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-200 transition">
+            <i class="fab fa-google-play text-xl"></i>
+            <div>
+              <div class="text-xs">GET IT ON</div>
+              <div class="font-bold">Google Play</div>
+            </div>
+          </a>
         </div>
-    </section>
+      </div>
 
-    <!-- Testimonials Section -->
-    <section class="py-16 bg-blue-950">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-white mb-4 scroll-animate">Client's Testimonials</h2>
-            <p class="text-xl text-gray-200 text-center mb-12 scroll-animate">What our Client Says About Us</p>
-            <p class="text-center text-gray-200 mb-8 scroll-animate">Hear from testimonies from over 10,000+ users of our incredible services.</p>
-            
-            <button class="mx-auto block bg-primary text-white px-6 py-3 rounded-lg mb-12 hover:bg-secondary transition-colors duration-300 scroll-animate">
-                Get your Ride
-            </button>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md scroll-animate">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"><img src="images/image-removebg-preview (16).png" alt=""></div>
-                        <h4 class="font-bold">Aliyah Moore</h4>
-                        <p class="text-gray-600 text-sm">Troder</p>
-                    </div>
-                    <p class="text-gray-700 italic">"Optob Ride is a turntable for me as a business man. At first I thought it was another random logistics company, but after exploring the features I saw amazing things and new innovation."</p>
-                </div>
-                
-                <!-- Testimonial 2 -->
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md scroll-animate">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"><img src="images/image-removebg-preview (16).png" alt=""></div>
-                        <h4 class="font-bold">Aliyah Moore</h4>
-                        <p class="text-gray-600 text-sm">Troder</p>
-                    </div>
-                    <p class="text-gray-700 italic">"Optob Ride is a turntable for me as a business man. At first I thought it was another random logistics company, but after exploring the features I saw amazing things and new innovation."</p>
-                </div>
-                
-                <!-- Testimonial 3 -->
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md scroll-animate">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"><img src="images/image-removebg-preview (16).png" alt=""></div>
-                        <h4 class="font-bold">Aliyah Moore</h4>
-                        <p class="text-gray-600 text-sm">Troder</p>
-                    </div>
-                    <p class="text-gray-700 italic">"Optob Ride is a turntable for me as a business man. At first I thought it was another random logistics company, but after exploring the features I saw amazing things and new innovation."</p>
-                </div>
-            </div>
+      <div class="animate-float">
+        <img src="images/image-removebg-preview (13).png" class="w-full" alt="">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========  FAQ  ========= -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12 scroll-animate">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
+      <p class="text-lg text-gray-600">Questions you might have, answered all in one place.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      <!-- FAQ 1 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
+        <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
+          <span>What is Optob Ride?</span>
+          <i class="fas fa-plus text-indigo-600"></i>
+        </button>
+        <div class="faq-answer hidden px-6 pb-6">
+          <p class="text-gray-700">Optob Ride is a fast growing logistics and transportation company whose main aim and mission is channelled to helping you, your family and your loved ones get top-notch services while taking a ride or sending packages.</p>
         </div>
-    </section>
+      </div>
 
-    <!-- News & Blogs Section -->
-    <section class="py-16 bg-gray-100">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-4 scroll-animate">News & Blogs</h2>
-            <p class="text-xl text-gray-700 text-center mb-12 scroll-animate">Our Latest News & Blogs</p>
-            
-            <div class="flex justify-end mb-6 scroll-animate">
-                <a href="#" class="text-primary font-medium">See more Blogs <i class="fas fa-arrow-right ml-2"></i></a>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Blog 1 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
-                    <img src="images/image-removebg-preview (17).png" alt="">
-                    <br>
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500 mb-2">Our Launch | Feb. 2025</div>
-                        <h3 class="font-bold mb-2">Optob Ride company launches as the first deliv...</h3>
-                        <a href="#" class="text-primary text-sm font-medium">Read more</a>
-                    </div>
-                </div>
-                
-                <!-- Blog 2 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
-                    <img src="images/image-removebg-preview (17).png" alt="">
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500 mb-2">Optob Ride 2.0 | March 2025</div>
-                        <h3 class="font-bold mb-2">Eco-Friendly Investments: Exploring Sustainable Fina...</h3>
-                        <a href="#" class="text-primary text-sm font-medium">Read more</a>
-                    </div>
-                </div>
-                
-                <!-- Blog 3 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
-                    <img src="images/image-removebg-preview (17).png" alt="">
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500 mb-2">Optob Deliveries | Aug. 2025</div>
-                        <h3 class="font-bold mb-2">Customers satisfaction increases by 5% over the...</h3>
-                        <a href="#" class="text-primary text-sm font-medium">Read more</a>
-                    </div>
-                </div>
-            </div>
+      <!-- FAQ 2 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
+        <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
+          <span>Is Optob Ride licensed?</span>
+          <i class="fas fa-plus text-indigo-600"></i>
+        </button>
+        <div class="faq-answer hidden px-6 pb-6">
+          <p class="text-gray-700">Yes, Optob Ride is fully licensed and complies with all local transportation regulations. We maintain proper insurance coverage for all our services.</p>
         </div>
-    </section>
+      </div>
 
-    <!-- Footer -->
-    <footer class="bg-black text-white py-12 relative">
-                            <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
-                                
-                                <!-- Left: Logo & Links -->
-                                <div>
-                                <!-- Logo -->
-                                <div class="flex items-center space-x-2 mb-6">
-                                    <img src="images/image-removebg-preview (26).png" alt="Optob Ride Logo" class="w-5 h-6">
-                                    <span class="text-xl font-semibold">Optob Ride</span>
-                                </div>
+      <!-- FAQ 3 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
+        <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
+          <span>How do I register on Optob Ride?</span>
+          <i class="fas fa-plus text-indigo-600"></i>
+        </button>
+        <div class="faq-answer hidden px-6 pb-6">
+          <p class="text-gray-700">Registration is simple! Download our app, enter your phone number, verify with the code sent to you, and complete your profile with basic information.</p>
+        </div>
+      </div>
 
-                                <!-- Links -->
-                                <div class="grid grid-cols-2 gap-8">
-                                    <!-- Overall -->
-                                    <div>
-                                    <h3 class="font-semibold mb-3">Overall</h3>
-                                    <ul class="space-y-2 text-gray-400 text-sm">
-                                        <li><a href="#" class="hover:text-white">Homepage</a></li>
-                                        <li><a href="#" class="hover:text-white">About us</a></li>
-                                        <li><a href="#" class="hover:text-white">Blog</a></li>
-                                        <li><a href="#" class="hover:text-white">Careers</a></li>
-                                    </ul>
-                                    </div>
-                                    <!-- Services -->
-                                    <div>
-                                    <h3 class="font-semibold mb-3">Services</h3>
-                                    <ul class="space-y-2 text-gray-400 text-sm">
-                                        <li><a href="#" class="hover:text-white">Ride</a></li>
-                                        <li><a href="#" class="hover:text-white">Drive</a></li>
-                                        <li><a href="#" class="hover:text-white">Delivery</a></li>
-                                        <li><a href="#" class="hover:text-white">Pick Ups</a></li>
-                                    </ul>
-                                    </div>
-                                </div>
-                                </div>
+      <!-- FAQ 4 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
+        <button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg">
+          <span>How do I fund my Optob wallet?</span>
+          <i class="fas fa-plus text-indigo-600"></i>
+        </button>
+        <div class="faq-answer hidden px-6 pb-6">
+          <p class="text-gray-700">You can fund your wallet using various payment methods including credit/debit cards, bank transfers, or mobile money options available in your region.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-                                <!-- Middle: Empty Spacer (for balance on desktop) -->
-                                <div></div>
+<!-- =========  TESTIMONIALS  ========= -->
+<section class="py-16 bg-blue-950 text-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold mb-4 scroll-animate">Client's Testimonials</h2>
+    <p class="text-xl text-gray-200 mb-12 scroll-animate">What our Client Says About Us</p>
 
-                                <!-- Right: App Store Buttons -->
-                                <div class="flex flex-col space-y-4 items-start md:items-end">
-                                <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-full w-48 hover:scale-105 transition">
-                                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12.005 2.002c1.486 0 2.924.583 3.978 1.637a5.624 5.624 0 0 1 1.637 3.978c0 1.486-.583 2.924-1.637 3.978a5.624 5.624 0 0 1-3.978 1.637c-1.486 0-2.924-.583-3.978-1.637a5.624 5.624 0 0 1-1.637-3.978c0-1.486.583-2.924 1.637-3.978a5.624 5.624 0 0 1 3.978-1.637z"/>
-                                    </svg>
-                                    <div class="text-left">
-                                    <p class="text-xs">Download on the</p>
-                                    <p class="font-semibold">App Store</p>
-                                    </div>
-                                </a>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white text-black p-6 rounded-lg shadow-md scroll-animate">
+        <div class="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"><img src="images/image-removebg-preview (16).png" alt=""></div>
+        <h4 class="font-bold">Aliyah Moore</h4>
+        <p class="text-gray-600 text-sm mb-4">Troder</p>
+        <p class="italic">"Optob Ride is a turntable for me as a business man. At first I thought it was another random logistics company, but after exploring the features I saw amazing things and new innovation."</p>
+      </div>
 
-                                <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-full w-48 hover:scale-105 transition">
-                                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 512 512">
-                                    <path d="M325.3 234.3 104.7 56.5c-4.5-3.6-8.8-3.5-12.2-.9-3.3 2.6-5.1 6.8-5.1 11.7v378.8c0 4.9 1.8 9.1 5.1 11.7 3.3 2.6 7.7 2.7 12.2-.9l220.6-177.8c6.8-5.5 6.8-14.5 0-20z"/>
-                                    </svg>
-                                    <div class="text-left">
-                                    <p class="text-xs">GET IT ON</p>
-                                    <p class="font-semibold">Google Play</p>
-                                    </div>
-                                </a>
-                                </div>
-                            </div>
+       <div class="bg-white text-black p-6 rounded-lg shadow-md scroll-animate">
+        <div class="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"><img src="images/image-removebg-preview (16).png" alt=""></div>
+        <h4 class="font-bold">Aliyah Moore</h4>
+        <p class="text-gray-600 text-sm mb-4">Troder</p>
+        <p class="italic">"Optob Ride is a turntable for me as a business man. At first I thought it was another random logistics company, but after exploring the features I saw amazing things and new innovation."</p>
+      </div>
 
-                            <!-- Bottom Row -->
-                            <div class="max-w-7xl mx-auto px-6 mt-12 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm space-y-4 md:space-y-0">
-                                
-                                <!-- Social Icons -->
-                                <div class="flex space-x-4">
-                                <a href="#" class="hover:text-white"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="hover:text-white"><i class="fab fa-x-twitter"></i></a>
-                                <a href="#" class="hover:text-white"><i class="fab fa-youtube"></i></a>
-                                <a href="#" class="hover:text-white"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a>
-                                </div>
+       <div class="bg-white text-black p-6 rounded-lg shadow-md scroll-animate">
+        <div class="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"><img src="images/image-removebg-preview (16).png" alt=""></div>
+        <h4 class="font-bold">Aliyah Moore</h4>
+        <p class="text-gray-600 text-sm mb-4">Troder</p>
+        <p class="italic">"Optob Ride is a turntable for me as a business man. At first I thought it was another random logistics company, but after exploring the features I saw amazing things and new innovation."</p>
+      </div>
+      <!-- duplicate cards removed for brevity – add as needed -->
+    </div>
+  </div>
+</section>
 
-                                <!-- Copyright -->
-                                <p class="text-center">© 2025 Optob Ride. All Rights Reserved</p>
+<!-- =========  NEWS & BLOGS  ========= -->
+<section class="py-16 bg-gray-100">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center mb-12 scroll-animate">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800">News & Blogs</h2>
+        <p class="text-lg text-gray-600">Our Latest News & Blogs</p>
+      </div>
+      <a href="#" class="text-indigo-600 font-medium">See more Blogs <i class="fas fa-arrow-right ml-2"></i></a>
+    </div>
 
-                                <!-- Policy Links -->
-                                <div class="flex space-x-6">
-                                <a href="#" class="hover:text-white">Privacy</a>
-                                <a href="#" class="hover:text-white">Accessibility</a>
-                                <a href="#" class="hover:text-white">Terms</a>
-                                </div>
-                            </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
+        <img src="images/image-removebg-preview (17).png" class="w-full" alt="">
+        <div class="p-6">
+          <div class="text-sm text-gray-500 mb-2">Our Launch | Feb. 2025</div>
+          <h3 class="font-bold mb-2">Optob Ride company launches as the first deliv...</h3>
+          <a href="#" class="text-indigo-600 text-sm font-medium">Read more</a>
+        </div>
+      </div>
 
-                            <!-- Back to Top Button -->
-                            <a href="#" class="fixed bottom-6 right-6 bg-white text-black rounded-full p-3 shadow-md hover:scale-110 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                </svg>
-                            </a>
-                </footer>
+       <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
+        <img src="images/image-removebg-preview (17).png" class="w-full" alt="">
+        <div class="p-6">
+          <div class="text-sm text-gray-500 mb-2">Our Launch | Feb. 2025</div>
+          <h3 class="font-bold mb-2">Optob Ride company launches as the first deliv...</h3>
+          <a href="#" class="text-indigo-600 text-sm font-medium">Read more</a>
+        </div>
+      </div>
 
-    <script>
-        // Mobile sidebar functionality
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const mobileSidebar = document.querySelector('.mobile-sidebar');
-        const mobileSidebarOverlay = document.querySelector('.mobile-sidebar-overlay');
-        const mobileSidebarClose = document.querySelector('.mobile-sidebar-close');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileSidebar.classList.add('active');
-            mobileSidebarOverlay.classList.add('active');
-        });
-        
-        mobileSidebarClose.addEventListener('click', () => {
-            mobileSidebar.classList.remove('active');
-            mobileSidebarOverlay.classList.remove('active');
-        });
-        
-        mobileSidebarOverlay.addEventListener('click', () => {
-            mobileSidebar.classList.remove('active');
-            mobileSidebarOverlay.classList.remove('active');
-        });
-        
-        // Sign up popup functionality
-        const signupBtns = document.querySelectorAll('.signup-btn, .signup-btn-mobile');
-        const popupOverlay = document.querySelector('.popup-overlay');
-        const popupClose = document.querySelector('.popup-close');
-        const popupOptions = document.querySelectorAll('.popup-option');
-        
-        signupBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                popupOverlay.classList.add('active');
-            });
-        });
-        
-        popupClose.addEventListener('click', () => {
-            popupOverlay.classList.remove('active');
-        });
-        
-        popupOverlay.addEventListener('click', (e) => {
-            if (e.target === popupOverlay) {
-                popupOverlay.classList.remove('active');
-            }
-        });
-        
-        popupOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                const role = option.getAttribute('data-role');
-                alert(`You've selected to sign up as a ${role}. This would normally redirect to the appropriate registration form.`);
-                popupOverlay.classList.remove('active');
-            });
-        });
-        
-        // FAQ toggle functionality
-        document.querySelectorAll('.faq-question').forEach(button => {
-            button.addEventListener('click', () => {
-                const answer = button.nextElementSibling;
-                const icon = button.querySelector('i');
-                
-                // Toggle answer visibility
-                answer.classList.toggle('hidden');
-                
-                // Toggle icon between plus and minus
-                if (answer.classList.contains('hidden')) {
-                    icon.classList.remove('fa-minus');
-                    icon.classList.add('fa-plus');
-                } else {
-                    icon.classList.remove('fa-plus');
-                    icon.classList.add('fa-minus');
-                }
-                
-                
-            
-                
-            });
-        });
-        
-        // Scroll animation functionality
-        const scrollElements = document.querySelectorAll('.scroll-animate');
-        
-        const elementInView = (el, dividend = 1) => {
-            const elementTop = el.getBoundingClientRect().top;
-            return (
-                elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
-            );
-        };
-        
-        const displayScrollElement = (element) => {
-            element.classList.add('animated');
-        };
-        
-        const handleScrollAnimation = () => {
-            scrollElements.forEach((el) => {
-                if (elementInView(el, 1.25)) {
-                    displayScrollElement(el);
-                }
-            });
-        };
-        
-        window.addEventListener('scroll', () => {
-            handleScrollAnimation();
-        });
-        
-        // Initialize animations on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            handleScrollAnimation();
-        });
-    </script>
+       <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate">
+        <img src="images/image-removebg-preview (17).png" class="w-full" alt="">
+        <div class="p-6">
+          <div class="text-sm text-gray-500 mb-2">Our Launch | Feb. 2025</div>
+          <h3 class="font-bold mb-2">Optob Ride company launches as the first deliv...</h3>
+          <a href="#" class="text-indigo-600 text-sm font-medium">Read more</a>
+        </div>
+      </div>
+      <!-- duplicate cards removed for brevity – add as needed -->
+    </div>
+  </div>
+</section>
+
+<!-- =========  FOOTER  ========= -->
+<footer class="bg-black text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-6">
+          <img src="images/image-removebg-preview (26).png" class="w-6" alt="logo">
+          <span class="text-xl font-semibold">Optob Ride</span>
+        </div>
+        <div class="grid grid-cols-2 gap-8 text-sm">
+          <div>
+            <h3 class="font-semibold mb-3">Overall</h3>
+            <ul class="space-y-2 text-gray-400">
+              <li><a href="#" class="hover:text-white">Homepage</a></li>
+              <li><a href="#" class="hover:text-white">About us</a></li>
+              <li><a href="#" class="hover:text-white">Blog</a></li>
+              <li><a href="#" class="hover:text-white">Careers</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-3">Services</h3>
+            <ul class="space-y-2 text-gray-400">
+              <li><a href="#" class="hover:text-white">Ride</a></li>
+              <li><a href="#" class="hover:text-white">Drive</a></li>
+              <li><a href="#" class="hover:text-white">Delivery</a></li>
+              <li><a href="#" class="hover:text-white">Pick Ups</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div></div> <!-- spacer -->
+
+      <div class="flex flex-col gap-4 md:items-end">
+        <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-full w-48 hover:scale-105 transition">
+          <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12.005 2.002c1.486 0 2.924.583 3.978 1.637a5.624 5.624 0 0 1 1.637 3.978c0 1.486-.583 2.924-1.637 3.978a5.624 5.624 0 0 1-3.978 1.637c-1.486 0-2.924-.583-3.978-1.637a5.624 5.624 0 0 1-1.637-3.978c0-1.486.583-2.924 1.637-3.978a5.624 5.624 0 0 1 3.978-1.637z"/></svg>
+          <div>
+            <div class="text-xs">Download on the</div>
+            <div class="font-semibold">App Store</div>
+          </div>
+        </a>
+
+        <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-full w-48 hover:scale-105 transition">
+          <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 512 512"><path d="M325.3 234.3 104.7 56.5c-4.5-3.6-8.8-3.5-12.2-.9-3.3 2.6-5.1 6.8-5.1 11.7v378.8c0 4.9 1.8 9.1 5.1 11.7 3.3 2.6 7.7 2.7 12.2-.9l220.6-177.8c6.8-5.5 6.8-14.5 0-20z"/></svg>
+          <div>
+            <div class="text-xs">GET IT ON</div>
+            <div class="font-semibold">Google Play</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 gap-4">
+      <div class="flex space-x-4">
+        <a href="#" class="hover:text-white"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="hover:text-white"><i class="fab fa-x-twitter"></i></a>
+        <a href="#" class="hover:text-white"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a>
+      </div>
+      <p>© 2025 Optob Ride. All Rights Reserved</p>
+      <div class="flex space-x-6">
+        <a href="#" class="hover:text-white">Privacy</a>
+        <a href="#" class="hover:text-white">Accessibility</a>
+        <a href="#" class="hover:text-white">Terms</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- back-to-top -->
+  <a href="#" class="fixed bottom-6 right-6 bg-white text-black rounded-full p-3 shadow-md hover:scale-110 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+  </a>
+</footer>
+
+<script>
+  /* ----  mobile drawer  ---- */
+  const openMobile  = document.getElementById('openMobile');
+  const closeMobile = document.getElementById('closeMobile');
+  const sidebar     = document.querySelector('.mobile-sidebar');
+  const overlay     = document.querySelector('.mobile-sidebar-overlay');
+
+  function openDrawer() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+  }
+  function closeDrawer() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+  }
+
+  openMobile.addEventListener('click', openDrawer);
+  closeMobile.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+
+  /* ----  sign-up pop-up  ---- */
+  const signupBtns = document.querySelectorAll('#signupHeader, .mobile-sidebar a:last-child');
+  const popup      = document.getElementById('signupPopup');
+  const closePopup = document.getElementById('closePopup');
+
+  signupBtns.forEach(btn => btn.addEventListener('click', e => {
+    e.preventDefault();
+    popup.classList.remove('hidden');
+    popup.classList.add('flex');
+  }));
+  closePopup.addEventListener('click', () => {
+    popup.classList.add('hidden');
+    popup.classList.remove('flex');
+  });
+  popup.addEventListener('click', e => {
+    if (e.target === popup) closeDrawer();
+  });
+
+  /* ----  FAQ toggle  ---- */
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const answer = btn.nextElementSibling;
+      const icon   = btn.querySelector('i');
+      answer.classList.toggle('hidden');
+      icon.classList.toggle('fa-plus');
+      icon.classList.toggle('fa-minus');
+    });
+  });
+
+  /* ----  scroll animations  ---- */
+  const scrollEls = document.querySelectorAll('.scroll-animate');
+  const inView    = (el, dividend = 1.25) => el.getBoundingClientRect().top <= window.innerHeight / dividend;
+  const display   = el => el.classList.add('animated');
+
+  const handleScroll = () => scrollEls.forEach(el => { if (inView(el)) display(el); });
+  window.addEventListener('scroll', handleScroll);
+  document.addEventListener('DOMContentLoaded', handleScroll);
+
+  /* ----  lucide icons  ---- */
+  lucide.createIcons();
+</script>
+
 </body>
 </html>
